@@ -1,39 +1,33 @@
 package com.example.kang_won.widgetex;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class SetActivity extends AppCompatActivity {
+public class SetActivity extends Activity {
 
-    private final static int REQUEST_CAMERA = 0;
     private final static int SELECT_FILE = 1;
-    private final static int UPLOAD_INFOIMG = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-       setContentView(R.layout.activity_set);
+      //  setContentView(R.layout.activity_set);
         selectImage();
     }
 
     public void selectImage() {
-        final CharSequence[] items = {"사진 찍기", "갤러리에서 가져오기", "색상 설정"};
+        final CharSequence[] items = {"이미지", "색상 설정"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("영수증 찍기")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA);
-                } else if (items[item].equals("갤러리에서 가져오기")) {
+                if (items[item].equals("이미지")) {
                     Intent intent = new Intent(
                             Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
