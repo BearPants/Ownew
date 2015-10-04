@@ -12,29 +12,29 @@ import java.net.URLEncoder;
  */
 public class HTMLCrawling {
 
-    public static String getHTML(String targetUrl){
+    public static String getHTML(String targetUrl) {
         URL url;
         HttpURLConnection conn;
         BufferedReader br;
         String line;
         String htmlCode = "";
 
-        try{
+        try {
             url = new URL(targetUrl);
-            conn = (HttpURLConnection)url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
             br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-            while((line = br.readLine()) != null){
+            while ((line = br.readLine()) != null) {
                 htmlCode += line + "\n";
             }
 
             br.close();
 
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
