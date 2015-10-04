@@ -34,7 +34,7 @@ public class WidgetEx extends AppWidgetProvider {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
         remoteViews.setTextViewText(R.id.widgetTime, dateFormat.format(calendar.getTime()) + appWidgetId);
 
-      //  Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.naver.com"));
+        //  Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.naver.com"));
         Intent intent = new Intent(context, SetActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.widgetLayout, pendingIntent);
@@ -44,5 +44,3 @@ public class WidgetEx extends AppWidgetProvider {
 
 
 }
-
-// uploadFile(uploadImagePath);

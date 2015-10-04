@@ -2,13 +2,22 @@ package com.example.kang_won.widgetex;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Window;
+import android.widget.ImageView;
 
 public class SetActivity extends Activity {
+
+    public Context getContext() {
+        return this;
+    }
 
     private final static int SELECT_FILE = 1;
 
@@ -16,11 +25,12 @@ public class SetActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  setContentView(R.layout.activity_set);
-        selectImage();
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_set);
+        chooseSetting();
     }
 
-    public void selectImage() {
+    public void chooseSetting() {
         final CharSequence[] items = {"이미지", "색상 설정"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -36,7 +46,6 @@ public class SetActivity extends Activity {
                             Intent.createChooser(intent, "Select File"),
                             SELECT_FILE);
                 } else if (items[item].equals("색상 설정")) {
-
                 }
             }
         });
@@ -50,18 +59,39 @@ public class SetActivity extends Activity {
         return true;
     }
 
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ImageView image = new ImageView(this);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_FILE) {
+
+
+                String selectedImagePath = getSelectedImagePath(data);
+                Context mContext = getContext();
+                Intent intent = new Intent(SetActivity.this, WidgetReceiver.class);
+                intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.IMAGE_PATH);
+                intent.putExtra(WidgetReceiver.IMAGE_PATH_KEY, selectedImagePath);
+                mContext.sendBroadcast(intent);
+                finish();
+            } else {
+                //이미지
+            }
+
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    public String getSelectedImagePath(Intent data) {
+
+        Uri selectedImageUri = data.getData();
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        Cursor cursor = managedQuery(selectedImageUri, projection,
+                null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }
