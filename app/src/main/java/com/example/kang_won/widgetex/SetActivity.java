@@ -8,23 +8,22 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.Window;
 import android.widget.ImageView;
 
-import com.rarepebble.colorpicker.ColorPickerView;
-
 public class SetActivity extends Activity {
 
     public Context getContext() {
         return this;
     }
-    public void activityFinish(){
+
+    public void activityFinish() {
         this.finish();
     }
+
     private final static int SELECT_FILE = 1;
 
 
@@ -58,17 +57,6 @@ public class SetActivity extends Activity {
                     Intent intent = new Intent(SetActivity.this, ColorPickerViewActivity.class);
                     startActivity(intent);
                     finish();
-                  /*  ColorPickerView picker = new ColorPickerView(getContext());
-                    picker.setColor(0xff12345);
-                    int colorCode = picker.getColor();
-                    Context mContext = getContext();
-
-                    Toast.makeText(mContext,String.valueOf(colorCode),Toast.LENGTH_LONG).show();
-
-                    Intent intent = new Intent(SetActivity.this, WidgetReceiver.class);
-                    intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.COLOR);
-                    intent.putExtra(WidgetReceiver.COLOR_KEY, colorCode);
-                    mContext.sendBroadcast(intent);*/
                 }
             }
         });
@@ -122,12 +110,5 @@ public class SetActivity extends Activity {
         return false;
     }
 
-    static public class DemoPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            final ColorPickerView picker = new ColorPickerView(this.getContext());
-            picker.setColor(0xff12345);
-        }
-    }
+
 }

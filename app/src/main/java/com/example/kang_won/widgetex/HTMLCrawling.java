@@ -1,15 +1,12 @@
-package com.example.kang_won.widgetex;
+﻿package com.example.kang_won.widgetex;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
-/**
- * Created by Kang-won on 2015-09-24.
- */
+
 public class HTMLCrawling {
 
     public static String getHTML(String targetUrl) {

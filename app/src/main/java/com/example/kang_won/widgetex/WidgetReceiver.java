@@ -16,9 +16,13 @@ import android.widget.RemoteViews;
 public class WidgetReceiver extends BroadcastReceiver {
     public final static String STATE = "STATE";
     public final static String IMAGE_PATH_KEY = "IMAGE_PATH";
-    public final static int IMAGE_PATH = 1000;
     public final static String COLOR_KEY = "COLOR";
+    public final static String CURURL_KEY = "CURURL";
+
+    public final static int IMAGE_PATH = 1000;
     public final static int COLOR = 1001;
+    public final static int GETWEBVIEWURL = 1002;
+
     public static boolean isLightOn = false;
     public static Camera camera;
 
@@ -39,9 +43,12 @@ public class WidgetReceiver extends BroadcastReceiver {
             views.setImageViewBitmap(R.id.imageView, bitmap);
         } else if (state == COLOR) {
             int colorCode = intent.getIntExtra(COLOR_KEY,-1);
+            views.setInt(R.id.imageView, "setBackgroundColor", colorCode);
+        } else if (state == GETWEBVIEWURL){
+            String setURL = intent.getStringExtra(CURURL_KEY);
 
+            views.setTextViewText(R.id.widgetTime, setURL);
         }
-
 
         appWidgetManager.updateAppWidget(new ComponentName(context,
                 WidgetEx.class), views);
