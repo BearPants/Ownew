@@ -8,25 +8,33 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.Window;
 import android.widget.ImageView;
+
+import com.rarepebble.colorpicker.ColorPickerView;
 
 public class SetActivity extends Activity {
 
     public Context getContext() {
         return this;
     }
-
+    public void activityFinish(){
+        this.finish();
+    }
     private final static int SELECT_FILE = 1;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_set);
+
         chooseSetting();
     }
 
@@ -45,7 +53,22 @@ public class SetActivity extends Activity {
                     startActivityForResult(
                             Intent.createChooser(intent, "Select File"),
                             SELECT_FILE);
+
                 } else if (items[item].equals("색상 설정")) {
+                    Intent intent = new Intent(SetActivity.this, ColorPickerViewActivity.class);
+                    startActivity(intent);
+                    finish();
+                  /*  ColorPickerView picker = new ColorPickerView(getContext());
+                    picker.setColor(0xff12345);
+                    int colorCode = picker.getColor();
+                    Context mContext = getContext();
+
+                    Toast.makeText(mContext,String.valueOf(colorCode),Toast.LENGTH_LONG).show();
+
+                    Intent intent = new Intent(SetActivity.this, WidgetReceiver.class);
+                    intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.COLOR);
+                    intent.putExtra(WidgetReceiver.COLOR_KEY, colorCode);
+                    mContext.sendBroadcast(intent);*/
                 }
             }
         });
@@ -67,8 +90,6 @@ public class SetActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_FILE) {
-
-
                 String selectedImagePath = getSelectedImagePath(data);
                 Context mContext = getContext();
                 Intent intent = new Intent(SetActivity.this, WidgetReceiver.class);
@@ -76,10 +97,8 @@ public class SetActivity extends Activity {
                 intent.putExtra(WidgetReceiver.IMAGE_PATH_KEY, selectedImagePath);
                 mContext.sendBroadcast(intent);
                 finish();
-            } else {
-                //이미지
+                this.activityFinish();
             }
-
         }
     }
 
@@ -93,5 +112,22 @@ public class SetActivity extends Activity {
                 .getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+        }
+        return false;
+    }
+
+    static public class DemoPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            final ColorPickerView picker = new ColorPickerView(this.getContext());
+            picker.setColor(0xff12345);
+        }
     }
 }
