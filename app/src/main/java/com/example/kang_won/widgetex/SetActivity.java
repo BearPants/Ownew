@@ -15,12 +15,11 @@ import android.widget.ImageView;
 
 public class SetActivity extends Activity {
 
+    private final static int SELECT_FILE = 1;
+
     public Context getContext() {
         return this;
     }
-
-    private final static int SELECT_FILE = 1;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

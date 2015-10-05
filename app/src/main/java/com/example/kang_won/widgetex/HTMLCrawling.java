@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 /**
- * Created by Kang-won on 2015-09-24.
+ * Created by 서강원 on 2015-09-24.
  */
 public class HTMLCrawling {
 
