@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         HttpGetTask httpGetTask = new HttpGetTask();
-        httpGetTask.execute("http://newssearch.naver.com/search.naver?where=rss&query=maroon5");
+        httpGetTask.execute("http://newssearch.naver.com/");
     }
 
     @Override

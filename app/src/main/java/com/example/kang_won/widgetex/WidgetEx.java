@@ -31,7 +31,7 @@ public class WidgetEx extends AppWidgetProvider {
         PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, 0, webViewIntent, 0);
 
         remoteViews.setOnClickPendingIntent(R.id.widgetLayout, pendingIntent);
-       // remoteViews.setOnClickPendingIntent(R.id.widgetTime, webViewPendingIntent);
+        // remoteViews.setOnClickPendingIntent(R.id.widgetTime, webViewPendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }

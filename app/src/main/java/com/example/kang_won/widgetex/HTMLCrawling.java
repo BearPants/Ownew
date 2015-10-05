@@ -1,11 +1,10 @@
-﻿package com.example.kang_won.widgetex;
+package com.example.kang_won.widgetex;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 
 public class HTMLCrawling {
 
@@ -37,5 +36,6 @@ public class HTMLCrawling {
 
         return htmlCode;
     }
+
 
 }
