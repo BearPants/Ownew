@@ -14,17 +14,19 @@ public class WidgetEx extends AppWidgetProvider {
 
     private static DBManager dbManager;
 
+
     @Override
-    public void onReceive(Context context, Intent intent){
+    public void onReceive(Context context, Intent intent) {
 
         String action = intent.getAction();
 
-        if(action.equals("android.appwidget.action.APPWIDGET_UPDATE")){
+        if (action.equals("android.appwidget.action.APPWIDGET_UPDATE")) {
             Log.d("RECEIVE!!!!!!!!!!!!!!!!", "android.appwidget.action.APPWIDGET_UPDATE");
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             this.onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(new ComponentName(context, getClass())));
         }
+
     }
 
     @Override
@@ -37,7 +39,7 @@ public class WidgetEx extends AppWidgetProvider {
         }
     }
 
-    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    public void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
@@ -52,11 +54,10 @@ public class WidgetEx extends AppWidgetProvider {
         // URL 있으면 -> 브라우저
         // URL 없으면 -> 웹뷰
 
-        if(recordCount == 0){
+        if (recordCount == 0) {
             Log.d("!!!!!!!!!!!First", "" + recordCount);
             webViewIntent = new Intent(context, WebViewActivity.class);
-        }
-        else{
+        } else {
             Log.d("!!!!!!!!!!!NotFirst", "fdfsfdsfdsfsdf");
             String url = dbManager.selectData(1);
             webViewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -65,10 +66,16 @@ public class WidgetEx extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, 0, webViewIntent, 0);
 
-        remoteViews.setOnClickPendingIntent(R.id.widgetLayout, pendingIntent);
-        // remoteViews.setOnClickPendingIntent(R.id.widgetTime, webViewPendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.widgetLayout, webViewPendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.settingButton, pendingIntent);
+
 
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 
+    public PendingIntent getPendingSelfIntent(Context context, String action) {
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(action);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
+    }
 }

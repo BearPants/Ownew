@@ -26,7 +26,7 @@ public class ColorPickerViewActivity extends Activity {
 
         picker = (ColorPickerView) findViewById(R.id.colorPicker);
         picker.setColor(0xffff0000);
-        setBtn = (Button) findViewById(R.id.setButton);
+        setBtn = (Button) findViewById(R.id.setColorButton);
         setBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v1) {
                 int colorCode = picker.getColor();

@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by 서강원 on 2015-10-05.
  */
-public class DBManager {
+public class    DBManager {
 
     private static final String dbName = "Ownew.db";
     private static final String tableName = "Ownew";
