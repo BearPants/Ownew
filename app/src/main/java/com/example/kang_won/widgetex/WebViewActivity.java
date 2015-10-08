@@ -3,23 +3,29 @@ package com.example.kang_won.widgetex;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /**
  * Created by 서강원 on 2015-09-24.
  */
 
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends Activity implements View.OnClickListener {
 
     private WebView webView;
     private Button setBtn;
+    private Button goBtn;
+    private EditText urlText;
     private String defaultURL = null;
     private String curURL = null;
+
+    private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,30 +34,69 @@ public class WebViewActivity extends Activity {
 
         webView = (WebView)findViewById(R.id.webView);
         setBtn = (Button)findViewById(R.id.setBtn);
+        goBtn = (Button)findViewById(R.id.goBtn);
+        urlText = (EditText)findViewById(R.id.urlText);
 
         defaultURL = "http://www.naver.com";
 
-        goURL(defaultURL);
+        webView.setWebViewClient(new WebViewClient(){
 
-        setBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                curURL = getCurrentURL();
-
-                Toast.makeText(getApplicationContext(), curURL, Toast.LENGTH_LONG).show();
-
-                Intent intent = new Intent(WebViewActivity.this, WidgetReceiver.class);
-                intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.GETWEBVIEWURL);
-                intent.putExtra(WidgetReceiver.CURURL_KEY, curURL);
-                getApplicationContext().sendBroadcast(intent);
-                finish();
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                urlText.setText(url);
+                return super.shouldOverrideUrlLoading(view, url);
             }
         });
+
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        goURL(defaultURL);
+
+        setBtn.setOnClickListener(this);
+        goBtn.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == setBtn){
+
+            curURL = getCurrentURL();
+
+            Toast.makeText(getApplicationContext(), curURL, Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(WebViewActivity.this, WidgetReceiver.class);
+            intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.GET_WEBVIEW_URL);
+            intent.putExtra(WidgetReceiver.CURURL_KEY, curURL);
+
+            dbManager = new DBManager(getApplicationContext());
+
+            int recordCount = dbManager.getRecordCount(1);
+            Log.d("!!!!!!!!!!!!recordCount", "" + recordCount);
+
+            if(recordCount == 0){
+                Log.d("!!!!!!!!!!insert", curURL);
+                dbManager.insertData(1, curURL);
+                Log.d("!!!!!!!!!!insertSUCCESS", "SUCCESS");
+                String a = dbManager.selectData(1);
+                Log.d("!!!!!!!!!!insertSUCCESS", a);
+            }else{
+                Log.d("!!!!!!!!!!update", curURL);
+                dbManager.updateData(1, curURL);
+                Log.d("!!!!!!!!!!updateSUCCESS", "SUCCESS");
+                String a = dbManager.selectData(1);
+                Log.d("!!!!!!!!!!updateSUCCESS", a);
+            }
+
+            sendBroadCastForOnUpdate();
+
+            //getApplicationContext().sendBroadcast(intent);
+        }
+        else if(v == goBtn){
+            goURL(urlText.getText().toString());
+        }
     }
 
     public void goURL(String defaultURL){
-        webView.setWebViewClient(new WebViewClient());
-        webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(defaultURL);
     }
 
@@ -67,6 +112,13 @@ public class WebViewActivity extends Activity {
     public String getCurrentURL(){
 
         return webView.getUrl();
+    }
+
+    public void sendBroadCastForOnUpdate(){
+        Intent alarmIntent = new Intent();
+        alarmIntent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+
+        getApplicationContext().sendBroadcast(alarmIntent);
     }
 
 }

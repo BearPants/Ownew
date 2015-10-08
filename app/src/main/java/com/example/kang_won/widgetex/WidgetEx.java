@@ -6,9 +6,26 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 public class WidgetEx extends AppWidgetProvider {
+
+    private static DBManager dbManager;
+
+    @Override
+    public void onReceive(Context context, Intent intent){
+
+        String action = intent.getAction();
+
+        if(action.equals("android.appwidget.action.APPWIDGET_UPDATE")){
+            Log.d("RECEIVE!!!!!!!!!!!!!!!!", "android.appwidget.action.APPWIDGET_UPDATE");
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            this.onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(new ComponentName(context, getClass())));
+        }
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -25,7 +42,25 @@ public class WidgetEx extends AppWidgetProvider {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
         Intent intent = new Intent(context, SetActivity.class);
-        Intent webViewIntent = new Intent(context, WebViewActivity.class);
+        Intent webViewIntent;
+
+        dbManager = new DBManager(context);
+
+        int recordCount = dbManager.getRecordCount(1);
+
+        // URL 저장 여부 확인 후
+        // URL 있으면 -> 브라우저
+        // URL 없으면 -> 웹뷰
+
+        if(recordCount == 0){
+            Log.d("!!!!!!!!!!!First", "" + recordCount);
+            webViewIntent = new Intent(context, WebViewActivity.class);
+        }
+        else{
+            Log.d("!!!!!!!!!!!NotFirst", "fdfsfdsfdsfsdf");
+            String url = dbManager.selectData(1);
+            webViewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, 0, webViewIntent, 0);

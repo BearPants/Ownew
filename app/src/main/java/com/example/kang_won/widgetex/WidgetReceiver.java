@@ -21,7 +21,7 @@ public class WidgetReceiver extends BroadcastReceiver {
 
     public final static int IMAGE_PATH = 1000;
     public final static int COLOR = 1001;
-    public final static int GETWEBVIEWURL = 1002;
+    public final static int GET_WEBVIEW_URL = 1002;
 
     public static boolean isLightOn = false;
     public static Camera camera;
@@ -44,7 +44,7 @@ public class WidgetReceiver extends BroadcastReceiver {
         } else if (state == COLOR) {
             int colorCode = intent.getIntExtra(COLOR_KEY,-1);
             views.setInt(R.id.imageView, "setBackgroundColor", colorCode);
-        } else if (state == GETWEBVIEWURL){
+        } else if (state == GET_WEBVIEW_URL){
             String setURL = intent.getStringExtra(CURURL_KEY);
 
             views.setTextViewText(R.id.widgetTime, setURL);
