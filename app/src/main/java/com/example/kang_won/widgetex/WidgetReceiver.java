@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -18,12 +19,13 @@ public class WidgetReceiver extends BroadcastReceiver {
     public final static String STATE = "STATE";
     public final static String IMAGE_PATH_KEY = "IMAGE_PATH";
     public final static String COLOR_KEY = "COLOR";
-    public final static String URL_KEY = "URL";
+    public final static String SCREENSHOT_KEY = "SCREENSHOT";
     public final static String CURURL_KEY = "CURURL";
 
     public final static int IMAGE_PATH = 1000;
     public final static int COLOR = 1001;
     public final static int GET_WEBVIEW_URL = 1002;
+    public final static int SCREENSHOT = 1003;
 
     public static boolean isLightOn = false;
     public static Camera camera;
@@ -49,8 +51,12 @@ public class WidgetReceiver extends BroadcastReceiver {
             views.setInt(R.id.colorView, "setBackgroundColor", colorCode);
             changeViewVisibility(views, COLOR);
 
-        } else if (state == GET_WEBVIEW_URL) {
-
+        } else if (state == SCREENSHOT) {
+            Log.d("ScreenshotBroadCast", "GET BITMAP");
+            byte[] byteArray = intent.getByteArrayExtra(SCREENSHOT_KEY);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            views.setImageViewBitmap(R.id.imageView, bitmap);
+            changeViewVisibility(views, IMAGE_PATH);
         }
 
         appWidgetManager.updateAppWidget(new ComponentName(context,

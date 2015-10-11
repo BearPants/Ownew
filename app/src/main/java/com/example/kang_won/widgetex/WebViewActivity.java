@@ -10,7 +10,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 /**
  * Created by 서강원 on 2015-09-24.
@@ -32,14 +31,14 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        webView = (WebView)findViewById(R.id.webView);
-        setBtn = (Button)findViewById(R.id.setBtn);
-        goBtn = (Button)findViewById(R.id.goBtn);
-        urlText = (EditText)findViewById(R.id.urlText);
+        webView = (WebView) findViewById(R.id.webView);
+        setBtn = (Button) findViewById(R.id.setBtn);
+        goBtn = (Button) findViewById(R.id.goBtn);
+        urlText = (EditText) findViewById(R.id.urlText);
 
         defaultURL = "http://www.naver.com";
 
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -50,6 +49,7 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
 
         webView.getSettings().setJavaScriptEnabled(true);
 
+
         goURL(defaultURL);
 
         setBtn.setOnClickListener(this);
@@ -58,28 +58,25 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v == setBtn){
+        if (v == setBtn) {
 
             curURL = getCurrentURL();
 
-            Toast.makeText(getApplicationContext(), curURL, Toast.LENGTH_LONG).show();
+            //   Toast.makeText(getApplicationContext(), curURL, Toast.LENGTH_LONG).show();
 
-            Intent intent = new Intent(WebViewActivity.this, WidgetReceiver.class);
-            intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.GET_WEBVIEW_URL);
-            intent.putExtra(WidgetReceiver.CURURL_KEY, curURL);
 
             dbManager = new DBManager(getApplicationContext());
 
             int recordCount = dbManager.getRecordCount(1);
             Log.d("!!!!!!!!!!!!recordCount", "" + recordCount);
 
-            if(recordCount == 0){
+            if (recordCount == 0) {
                 Log.d("!!!!!!!!!!insert", curURL);
                 dbManager.insertData(1, curURL);
                 Log.d("!!!!!!!!!!insertSUCCESS", "SUCCESS");
                 String a = dbManager.selectData(1);
                 Log.d("!!!!!!!!!!insertSUCCESS", a);
-            }else{
+            } else {
                 Log.d("!!!!!!!!!!update", curURL);
                 dbManager.updateData(1, curURL);
                 Log.d("!!!!!!!!!!updateSUCCESS", "SUCCESS");
@@ -88,20 +85,23 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
             }
 
             sendBroadCastForOnUpdate();
+            Intent intent = new Intent(WebViewActivity.this, TakeScreenShotActivity.class);
+            intent.putExtra("URL", curURL);
+            startActivity(intent);
+            finish();
 
             //getApplicationContext().sendBroadcast(intent);
-        }
-        else if(v == goBtn){
+        } else if (v == goBtn) {
             goURL(urlText.getText().toString());
         }
     }
 
-    public void goURL(String defaultURL){
+    public void goURL(String defaultURL) {
         webView.loadUrl(defaultURL);
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-        if(keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()){
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
             webView.goBack();
 
             return true;
@@ -109,12 +109,12 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
         return super.onKeyDown(keyCode, event);
     }
 
-    public String getCurrentURL(){
+    public String getCurrentURL() {
 
         return webView.getUrl();
     }
 
-    public void sendBroadCastForOnUpdate(){
+    public void sendBroadCastForOnUpdate() {
         Intent alarmIntent = new Intent();
         alarmIntent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
 

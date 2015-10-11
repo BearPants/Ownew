@@ -15,5 +15,6 @@
     <string name="title_activity_color_picker_view">ColorPickerView</string>
 
     <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_take_screen_shot">TakeScreenShotActivity</string>
 
 </resources>
