@@ -40,6 +40,7 @@ public class WidgetReceiver extends BroadcastReceiver {
 
 
         int state = intent.getIntExtra(STATE, -1);
+        Log.d("GetIntent", "ERROR!!!!!");
         if (state == -1) {
 
         } else if (state == IMAGE_PATH) {

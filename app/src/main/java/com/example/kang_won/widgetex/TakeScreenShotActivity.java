@@ -40,7 +40,8 @@ public class TakeScreenShotActivity extends Activity {
         mContext = this;
         stream = new ByteArrayOutputStream();
         wv = (WebView) findViewById(R.id.webView2);
-
+        wv.getSettings().setDomStorageEnabled(true);
+        wv.getSettings().setJavaScriptEnabled(true);
         final String mimeType = "text/html";
         final String encoding = "UTF-8";
         Intent receivedIntent = getIntent();
@@ -101,7 +102,10 @@ public class TakeScreenShotActivity extends Activity {
                 intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.SCREENSHOT);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
+                Log.d("size", String.valueOf(byteArray.length));
+
                 intent.putExtra(WidgetReceiver.SCREENSHOT_KEY, byteArray);
+
                 mContext.sendBroadcast(intent);
                 Log.d("BroadCast", "SendBroadCast !!!!!!!!!!!");
                 wv.clearCache(true);

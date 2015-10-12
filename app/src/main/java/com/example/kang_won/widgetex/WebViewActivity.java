@@ -48,7 +48,7 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
         });
 
         webView.getSettings().setJavaScriptEnabled(true);
-
+        webView.getSettings().setDomStorageEnabled(true);
 
         goURL(defaultURL);
 
