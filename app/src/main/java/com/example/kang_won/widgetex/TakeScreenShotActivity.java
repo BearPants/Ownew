@@ -22,6 +22,7 @@ public class TakeScreenShotActivity extends Activity {
 
     public WebView wv;
     private int specWidth;
+    private int widgetID;
     private String html;
     private String url;
     private Point size;
@@ -34,20 +35,28 @@ public class TakeScreenShotActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_take_screen_shot);
+
         Display display = getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
+
         mContext = this;
         stream = new ByteArrayOutputStream();
+
         wv = (WebView) findViewById(R.id.webView2);
         wv.getSettings().setDomStorageEnabled(true);
         wv.getSettings().setJavaScriptEnabled(true);
+
         final String mimeType = "text/html";
         final String encoding = "UTF-8";
+
         Intent receivedIntent = getIntent();
         url = receivedIntent.getStringExtra("URL");
+        widgetID = receivedIntent.getIntExtra("WidgetID", 0);
+        Log.d("WidgetID - TakeScreen", widgetID + "");
 
         HttpGetTask httpGetTask = new HttpGetTask();
+
         try {
             html = httpGetTask.execute(url).get();
         } catch (InterruptedException e) {
@@ -62,10 +71,15 @@ public class TakeScreenShotActivity extends Activity {
             public void onPageFinished(WebView webView, String url) {
                 super.onPageFinished(webView, url);
                 Log.d("WebView", "onPageFinished !!!!!!!!!!!");
+
                 int width, height;
+
                 specWidth = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 wv.measure(specWidth, specWidth);
+
                 Log.d("size", String.valueOf(wv.getMeasuredWidth() + " - " + wv.getMeasuredHeight()));
+                Log.d("WidgetID - TakeScreen", widgetID + "");
+
                 width = wv.getMeasuredWidth();
                 height = wv.getMeasuredHeight();
 
@@ -83,6 +97,7 @@ public class TakeScreenShotActivity extends Activity {
 
             }
         });
+
         wv.loadDataWithBaseURL("", html, mimeType, encoding, "");
         httpGetTask.cancel(true);
         wv.setVisibility(View.INVISIBLE);
@@ -96,10 +111,14 @@ public class TakeScreenShotActivity extends Activity {
                 // TODO Auto-generated method stub
 
                 bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
                 final Canvas c = new Canvas(bitmap);
                 wv.draw(c);
+
                 Intent intent = new Intent(TakeScreenShotActivity.this, WidgetReceiver.class);
                 intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.SCREENSHOT);
+                intent.putExtra("WidgetID", widgetID);
+
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
                 Log.d("size", String.valueOf(byteArray.length));
@@ -108,6 +127,7 @@ public class TakeScreenShotActivity extends Activity {
 
                 mContext.sendBroadcast(intent);
                 Log.d("BroadCast", "SendBroadCast !!!!!!!!!!!");
+
                 wv.clearCache(true);
                 finish();
             }

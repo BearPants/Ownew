@@ -21,8 +21,9 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
     private Button setBtn;
     private Button goBtn;
     private EditText urlText;
-    private String defaultURL = null;
+    private String defaultURL = "http://www.naver.com";
     private String curURL = null;
+    private int widgetID;
 
     private DBManager dbManager;
 
@@ -36,7 +37,9 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
         goBtn = (Button) findViewById(R.id.goBtn);
         urlText = (EditText) findViewById(R.id.urlText);
 
-        defaultURL = "http://www.naver.com";
+        Intent receivedIntent = getIntent();
+        widgetID = receivedIntent.getIntExtra("WidgetID", 0);
+        Log.d("WidgetID = Webview", widgetID + "");
 
         webView.setWebViewClient(new WebViewClient() {
 
@@ -67,26 +70,27 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
 
             dbManager = new DBManager(getApplicationContext());
 
-            int recordCount = dbManager.getRecordCount(1);
+            int recordCount = dbManager.getRecordCount(widgetID);
             Log.d("!!!!!!!!!!!!recordCount", "" + recordCount);
 
             if (recordCount == 0) {
                 Log.d("!!!!!!!!!!insert", curURL);
-                dbManager.insertData(1, curURL);
+                dbManager.insertData(widgetID, curURL);
                 Log.d("!!!!!!!!!!insertSUCCESS", "SUCCESS");
-                String a = dbManager.selectData(1);
+                String a = dbManager.selectData(widgetID);
                 Log.d("!!!!!!!!!!insertSUCCESS", a);
             } else {
                 Log.d("!!!!!!!!!!update", curURL);
-                dbManager.updateData(1, curURL);
+                dbManager.updateData(widgetID, curURL);
                 Log.d("!!!!!!!!!!updateSUCCESS", "SUCCESS");
-                String a = dbManager.selectData(1);
+                String a = dbManager.selectData(widgetID);
                 Log.d("!!!!!!!!!!updateSUCCESS", a);
             }
 
             sendBroadCastForOnUpdate();
             Intent intent = new Intent(WebViewActivity.this, TakeScreenShotActivity.class);
             intent.putExtra("URL", curURL);
+            intent.putExtra("WidgetID", widgetID);
             startActivity(intent);
             finish();
 

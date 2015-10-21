@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by 서강원 on 2015-10-05.
  */
-public class    DBManager {
+public class DBManager {
 
     private static final String dbName = "Ownew.db";
     private static final String tableName = "Ownew";
@@ -33,7 +33,7 @@ public class    DBManager {
 
         public void onCreate(SQLiteDatabase arg0){
             String createSQL = "CREATE TABLE " + tableName + " ("
-                    + "id integer primary key autoincrement, " + "url text)";
+                    + "widgetId integer primary key autoincrement, " + "url text)";
 
             arg0.execSQL(createSQL);
         }
@@ -43,25 +43,25 @@ public class    DBManager {
         }
     }
 
-    public void insertData(int id, String url){
-        String insertQuery = "INSERT INTO " + tableName + " VALUES(" + id + ", '"
+    public void insertData(int widgetId, String url){
+        String insertQuery = "INSERT INTO " + tableName + " VALUES(" + widgetId + ", '"
                 + url + "')";
 
         db.execSQL(insertQuery);
     }
 
-    public void updateData(int id, String url){
-        String updateQuery = "UPDATE " + tableName + " SET url='" + url + "' WHERE id=" + id + ";";
+    public void updateData(int widgetId, String url){
+        String updateQuery = "UPDATE " + tableName + " SET url='" + url + "' WHERE widgetId=" + widgetId + ";";
         db.execSQL(updateQuery);
     }
 
-    public void deleteData(int id){
-        String deleteQuery = "DELETE FROM " + tableName + "WHERE id=" + id + ";";
+    public void deleteData(int widgetId){
+        String deleteQuery = "DELETE FROM " + tableName + " WHERE widgetId=" + widgetId + ";";
         db.execSQL(deleteQuery);
     }
 
-    public String selectData(int id){
-        String selectQuery = "SELECT * FROM " + tableName + " WHERE id=" + id + ";";
+    public String selectData(int widgetId){
+        String selectQuery = "SELECT * FROM " + tableName + " WHERE widgetId=" + widgetId + ";";
         Cursor cursor = db.rawQuery(selectQuery, null);
         String resultURL;
 
@@ -75,8 +75,8 @@ public class    DBManager {
         return null;
     }
 
-    public int getRecordCount(int id){
-        String selectQuery = "SELECT * FROM " + tableName + " WHERE id=" + id + ";";
+    public int getRecordCount(int widgetId){
+        String selectQuery = "SELECT * FROM " + tableName + " WHERE widgetId=" + widgetId + ";";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 

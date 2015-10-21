@@ -7,13 +7,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 public class WidgetEx extends AppWidgetProvider {
 
     private static DBManager dbManager;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,6 +27,24 @@ public class WidgetEx extends AppWidgetProvider {
             this.onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(new ComponentName(context, getClass())));
         }
 
+        else if(action.equals("android.appwidget.action.APPWIDGET_DELETED")){
+            Log.d("DELETE!!!!!!!!!!!!!!!!", "android.appwidget.action.APPWIDGET_DELETE");
+
+            Bundle extras = intent.getExtras();
+            int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
+
+            Log.d("WIDGET _DELETE!!!", appWidgetId + "");
+
+            dbManager = new DBManager(context);
+
+            int recordCount = dbManager.getRecordCount(appWidgetId);
+
+            if (recordCount != 0) {
+                Log.d("!!!!!!!!!!!DELETE", "" + recordCount);
+                dbManager.deleteData(appWidgetId);
+            }
+        }
+
     }
 
     @Override
@@ -34,6 +52,7 @@ public class WidgetEx extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
         appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, getClass()));
+
         for (int i = 0; i < appWidgetIds.length; i++) {
             updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
         }
@@ -44,11 +63,12 @@ public class WidgetEx extends AppWidgetProvider {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
         Intent intent = new Intent(context, SetActivity.class);
+        intent.putExtra("WidgetID", appWidgetId);
         Intent webViewIntent;
 
         dbManager = new DBManager(context);
 
-        int recordCount = dbManager.getRecordCount(1);
+        int recordCount = dbManager.getRecordCount(appWidgetId);
 
         // URL 저장 여부 확인 후
         // URL 있으면 -> 브라우저
@@ -57,18 +77,19 @@ public class WidgetEx extends AppWidgetProvider {
         if (recordCount == 0) {
             Log.d("!!!!!!!!!!!First", "" + recordCount);
             webViewIntent = new Intent(context, WebViewActivity.class);
+            webViewIntent.putExtra("WidgetID", appWidgetId);
+            Log.d("WidgetID!!!!!!!!", appWidgetId + "");
         } else {
             Log.d("!!!!!!!!!!!NotFirst", "fdfsfdsfdsfsdf");
-            String url = dbManager.selectData(1);
+            String url = dbManager.selectData(appWidgetId);
             webViewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, 0, webViewIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
+        PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, appWidgetId, webViewIntent, 0);
 
         remoteViews.setOnClickPendingIntent(R.id.widgetLayout, webViewPendingIntent);
         remoteViews.setOnClickPendingIntent(R.id.settingButton, pendingIntent);
-
 
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }

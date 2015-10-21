@@ -2,7 +2,6 @@ package com.example.kang_won.widgetex;
 
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,14 +32,15 @@ public class WidgetReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        RemoteViews views = new RemoteViews(context.getPackageName(),
-                R.layout.widget_layout);
-        AppWidgetManager appWidgetManager = AppWidgetManager
-                .getInstance(context);
-
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 
         int state = intent.getIntExtra(STATE, -1);
+        int widgetID = intent.getIntExtra("WidgetID", 0);
+        Log.d("WidgetID-Receiver", widgetID + "");
+
         Log.d("GetIntent", "ERROR!!!!!");
+
         if (state == -1) {
 
         } else if (state == IMAGE_PATH) {
@@ -60,8 +60,8 @@ public class WidgetReceiver extends BroadcastReceiver {
             changeViewVisibility(views, IMAGE_PATH);
         }
 
-        appWidgetManager.updateAppWidget(new ComponentName(context,
-                WidgetEx.class), views);
+        //appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
+        appWidgetManager.updateAppWidget(widgetID, views);
 
     }
 
