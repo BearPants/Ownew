@@ -53,11 +53,24 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
 
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                WebView.HitTestResult hr = webView.getHitTestResult();
+
+                if(hr != null){
+                    Log.d("REREREERE", hr.getExtra() + "oioioioi" + hr.getType());
+                }
+                return false;
+            }
+        });
+
         goURL(defaultURL);
 
         setBtn.setOnClickListener(this);
         goBtn.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View v) {
