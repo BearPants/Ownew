@@ -140,7 +140,7 @@ public class TakeScreenShotActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
 
-            html = HTMLCrawling.getHTML(params[0]);
+            html = XMLparsing.getHTML(params[0]);
             return html;
         }
 

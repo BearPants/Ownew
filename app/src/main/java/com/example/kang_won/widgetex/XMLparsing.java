@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HTMLCrawling {
+public class XMLparsing {
 
     public static String getHTML(String targetUrl) {
         URL url;

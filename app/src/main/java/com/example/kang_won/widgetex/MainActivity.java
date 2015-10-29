@@ -5,11 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -21,8 +19,10 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends Activity {
 
-    private String streamTitle = "";
     private TextView mResult;
+
+    RSSHandler myRSSHandler = new RSSHandler();
+    ItemList itemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +44,11 @@ public class MainActivity extends Activity {
                 SAXParserFactory mySAXParserFactory = SAXParserFactory.newInstance();
                 SAXParser mySAXParser = mySAXParserFactory.newSAXParser();
                 XMLReader myXMLReader = mySAXParser.getXMLReader();
-                RSSHandler myRSSHandler = new RSSHandler();
                 myXMLReader.setContentHandler(myRSSHandler);
                 InputSource myInputSource = new InputSource(rssUrl.openStream());
                 myXMLReader.parse(myInputSource);
+
+                itemList = myRSSHandler.getRssInfoList();
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -67,56 +68,9 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void result) {
-            mResult.setText(streamTitle);
+            mResult.setText(itemList.getList());
             super.onPostExecute(result);
         }
     }
 
-    private class RSSHandler extends DefaultHandler {
-        final int stateUnknown = 0;
-        final int stateTitle = 1;
-        int state = stateUnknown;
-
-        int numberOfTitle = 0;
-        String strTitle = "";
-        String strElement = "";
-
-        @Override
-        public void startDocument() throws SAXException {
-            strTitle = "--- Start Document ---\n";
-        }
-
-        @Override
-        public void endDocument() throws SAXException {
-            strTitle += "--- End Document ---";
-            streamTitle = "Number Of Title: " + String.valueOf(numberOfTitle) + "\n" + strTitle;
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            if (localName.equalsIgnoreCase("title")) {
-                state = stateTitle;
-                strElement = "Title: ";
-                numberOfTitle++;
-            } else {
-                state = stateUnknown;
-            }
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (localName.equalsIgnoreCase("title")) {
-                strTitle += strElement + "\n";
-            }
-            state = stateUnknown;
-        }
-
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
-            String strCharacters = new String(ch, start, length);
-            if (state == stateTitle) {
-                strElement += strCharacters;
-            }
-        }
-    }
 }
