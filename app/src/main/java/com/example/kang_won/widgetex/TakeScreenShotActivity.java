@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -16,6 +17,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class TakeScreenShotActivity extends Activity {
@@ -109,21 +114,27 @@ public class TakeScreenShotActivity extends Activity {
             @Override
             public void run() {
                 // TODO Auto-generated method stub
-
-                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-                final Canvas c = new Canvas(bitmap);
-                wv.draw(c);
+                String location = Environment.getExternalStorageDirectory().getAbsolutePath()+"/temp.PNG";
+                File file=new File(location);
+                try {
+                    FileOutputStream filestream = new FileOutputStream(file);
+                    file.createNewFile();
+                    bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    final Canvas c = new Canvas(bitmap);
+                    wv.draw(c);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, filestream);
+                    filestream.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 Intent intent = new Intent(TakeScreenShotActivity.this, WidgetReceiver.class);
                 intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.SCREENSHOT);
                 intent.putExtra("WidgetID", widgetID);
 
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                Log.d("size", String.valueOf(byteArray.length));
-
-                intent.putExtra(WidgetReceiver.SCREENSHOT_KEY, byteArray);
+                intent.putExtra(WidgetReceiver.SCREENSHOT_KEY, location);
 
                 mContext.sendBroadcast(intent);
                 Log.d("BroadCast", "SendBroadCast !!!!!!!!!!!");

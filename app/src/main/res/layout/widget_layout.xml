@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor = "#111111"
-            android:text="dddddddd"/>
+            android:text="중간데모"/>
 
     </FrameLayout>
 

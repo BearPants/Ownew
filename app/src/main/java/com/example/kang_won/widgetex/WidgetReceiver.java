@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import java.io.File;
+
 /**
  * Created by 김재관 on 2015-10-04.
  */
@@ -18,7 +20,7 @@ public class WidgetReceiver extends BroadcastReceiver {
     public final static String STATE = "STATE";
     public final static String IMAGE_PATH_KEY = "IMAGE_PATH";
     public final static String COLOR_KEY = "COLOR";
-    public final static String SCREENSHOT_KEY = "SCREENSHOT";
+    public final static String SCREENSHOT_KEY = "SCREENSHOT_PATH";
     public final static String CURURL_KEY = "CURURL";
 
     public final static int IMAGE_PATH = 1000;
@@ -54,10 +56,12 @@ public class WidgetReceiver extends BroadcastReceiver {
 
         } else if (state == SCREENSHOT) {
             Log.d("ScreenshotBroadCast", "GET BITMAP");
-            byte[] byteArray = intent.getByteArrayExtra(SCREENSHOT_KEY);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            String location = intent.getStringExtra(SCREENSHOT_KEY);
+            Bitmap bitmap = BitmapFactory.decodeFile(location);
             views.setImageViewBitmap(R.id.imageView, bitmap);
             changeViewVisibility(views, IMAGE_PATH);
+            File temp = new File(location);
+            temp.delete();
         }
 
         //appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
