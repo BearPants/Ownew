@@ -133,12 +133,10 @@ public class TakeScreenShotActivity extends Activity {
                 Intent intent = new Intent(TakeScreenShotActivity.this, WidgetReceiver.class);
                 intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.SCREENSHOT);
                 intent.putExtra("WidgetID", widgetID);
-
                 intent.putExtra(WidgetReceiver.SCREENSHOT_KEY, location);
 
                 mContext.sendBroadcast(intent);
                 Log.d("BroadCast", "SendBroadCast !!!!!!!!!!!");
-
                 wv.clearCache(true);
                 finish();
             }

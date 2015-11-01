@@ -16,5 +16,8 @@
 
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="title_activity_take_screen_shot">TakeScreenShotActivity</string>
+    <string name="title_activity_select_rssfeed">SelectRSSFeedActivity</string>
+    <string name="title_activity_index_adapter">IndexAdapter</string>
+    <string name="title_activity_content_adapter">ContentAdapter</string>
 
 </resources>

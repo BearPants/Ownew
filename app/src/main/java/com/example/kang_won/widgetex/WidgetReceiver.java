@@ -41,7 +41,7 @@ public class WidgetReceiver extends BroadcastReceiver {
         int widgetID = intent.getIntExtra("WidgetID", 0);
         Log.d("WidgetID-Receiver", widgetID + "");
 
-        Log.d("GetIntent", "ERROR!!!!!");
+
 
         if (state == -1) {
 
@@ -64,8 +64,8 @@ public class WidgetReceiver extends BroadcastReceiver {
             temp.delete();
         }
 
-        //appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
-        appWidgetManager.updateAppWidget(widgetID, views);
+       // appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
+       appWidgetManager.updateAppWidget(widgetID, views);
 
     }
 

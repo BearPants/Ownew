@@ -25,9 +25,7 @@ public class WidgetEx extends AppWidgetProvider {
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             this.onUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(new ComponentName(context, getClass())));
-        }
-
-        else if(action.equals("android.appwidget.action.APPWIDGET_DELETED")){
+        } else if (action.equals("android.appwidget.action.APPWIDGET_DELETED")) {
             Log.d("DELETE!!!!!!!!!!!!!!!!", "android.appwidget.action.APPWIDGET_DELETE");
 
             Bundle extras = intent.getExtras();
