@@ -42,7 +42,6 @@ public class WidgetReceiver extends BroadcastReceiver {
         Log.d("WidgetID-Receiver", widgetID + "");
 
 
-
         if (state == -1) {
 
         } else if (state == IMAGE_PATH) {
@@ -64,8 +63,8 @@ public class WidgetReceiver extends BroadcastReceiver {
             temp.delete();
         }
 
-       // appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
-       appWidgetManager.updateAppWidget(widgetID, views);
+        // appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
+        appWidgetManager.updateAppWidget(widgetID, views);
 
     }
 
@@ -74,15 +73,15 @@ public class WidgetReceiver extends BroadcastReceiver {
             case IMAGE_PATH:
                 views.setInt(R.id.imageView, "setVisibility", View.VISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
-                views.setInt(R.id.widgetTime, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
                 break;
             case COLOR:
                 views.setInt(R.id.imageView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.VISIBLE);
-                views.setInt(R.id.widgetTime, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
                 break;
             case GET_WEBVIEW_URL:
-                views.setInt(R.id.widgetTime, "setVisibility", View.VISIBLE);
+                views.setInt(R.id.newsView, "setVisibility", View.VISIBLE);
                 views.setInt(R.id.imageView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
                 break;

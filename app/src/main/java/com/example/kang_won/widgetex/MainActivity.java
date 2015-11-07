@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 
         ProcessXmlTask xmlTask = new ProcessXmlTask();
         xmlTask.execute("http://rss.joins.com/joins_ilgan_list.xml");
-    }//http://www.chosun.com/site/data/rss/rss.xml
+    }
 
     private class ProcessXmlTask extends AsyncTask<String, Void, Void> {
 

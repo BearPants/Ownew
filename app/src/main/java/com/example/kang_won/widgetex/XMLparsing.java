@@ -26,7 +26,6 @@ public class XMLparsing {
             } else if (headerType.toUpperCase().indexOf("UTF-8") != -1) {
                 br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
             } else {
-
                 br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             }
             while ((line = br.readLine()) != null) {
