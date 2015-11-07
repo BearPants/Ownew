@@ -19,9 +19,16 @@ public class XMLparsing {
             url = new URL(targetUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            String headerType = conn.getContentType();
 
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            if (headerType.toUpperCase().indexOf("EUC_KR") != -1) {
+                br = new BufferedReader((new InputStreamReader(conn.getInputStream(), "EUC-KR")));
+            } else if (headerType.toUpperCase().indexOf("UTF-8") != -1) {
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            } else {
 
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            }
             while ((line = br.readLine()) != null) {
                 htmlCode += line + "\n";
             }
@@ -33,6 +40,7 @@ public class XMLparsing {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         return htmlCode;
     }

@@ -12,11 +12,11 @@ public class RssInfo {
     private String itemThumnailURL;
     private int itemType;
 
-    public RssInfo(){
+    public RssInfo() {
 
     }
 
-    public RssInfo(String itemTitle, String itemURL, String itemDescription, String itemDate, String itemThumnailURL, int itemType){
+    public RssInfo(String itemTitle, String itemURL, String itemDescription, String itemDate, String itemThumnailURL, int itemType) {
         this.itemTitle = itemTitle;
         this.itemURL = itemURL;
         this.itemDescription = itemDescription;
@@ -25,43 +25,44 @@ public class RssInfo {
         this.itemType = itemType;
     }
 
-    public void setItemTitle(String itemTitle){
+
+    public void setItemTitle(String itemTitle) {
         this.itemTitle = itemTitle;
     }
 
-    public void setItemURL(String itemURL){
+    public void setItemURL(String itemURL) {
         this.itemURL = itemURL;
     }
 
-    public void setItemDescription(String itemDescription){
+    public void setItemDescription(String itemDescription) {
         this.itemDescription = itemDescription;
     }
 
-    public void setItemDate(String itemDate){
+    public void setItemDate(String itemDate) {
         this.itemDate = itemDate;
     }
 
-    public void setItemThumnailURL(String itemThumnailURL){
+    public void setItemThumnailURL(String itemThumnailURL) {
         this.itemThumnailURL = itemThumnailURL;
     }
 
-    public String getItemTitle(){
+    public String getItemTitle() {
         return itemTitle;
     }
 
-    public String getItemURL(){
+    public String getItemURL() {
         return itemURL;
     }
 
-    public String getItemDescription(){
+    public String getItemDescription() {
         return itemDescription;
     }
 
-    public String getItemDate(){
+    public String getItemDate() {
         return itemDate;
     }
 
-    public String getItemThumnailURL(){
+    public String getItemThumnailURL() {
         return itemThumnailURL;
     }
 

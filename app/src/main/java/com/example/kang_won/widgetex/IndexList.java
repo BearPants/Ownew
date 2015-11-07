@@ -31,7 +31,7 @@ public class IndexList {
             temp.add(new ContentsList("동아일보", "http://rss.donga.com/total.xml", R.mipmap.donga));
             temp.add(new ContentsList("한겨례", "http://www.hani.co.kr/rss/", R.mipmap.han));
             temp.add(new ContentsList("중앙일보", "http://rss.joins.com/joins_news_list.xml", R.mipmap.chungang));
-            temp.add(new ContentsList("네이버", "http://feeds.feedburner.com/naver_news_popular", R.mipmap.naver));
+            //  temp.add(new ContentsList("네이버", "http://feeds.feedburner.com/naver_news_popular", R.mipmap.naver));
 
         }
         if (this.title.equals("날씨")) {

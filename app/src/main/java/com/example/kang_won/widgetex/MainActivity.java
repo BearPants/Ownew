@@ -10,8 +10,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -32,20 +32,25 @@ public class MainActivity extends Activity {
         mResult = (TextView) findViewById(R.id.xmlTextView);
 
         ProcessXmlTask xmlTask = new ProcessXmlTask();
-        xmlTask.execute("http://newssearch.naver.com/search.naver?where=rss&query=maroon5");
-    }
+        xmlTask.execute("http://rss.joins.com/joins_ilgan_list.xml");
+    }//http://www.chosun.com/site/data/rss/rss.xml
 
     private class ProcessXmlTask extends AsyncTask<String, Void, Void> {
 
         protected Void doInBackground(String... urls) {
             try {
 
-                URL rssUrl = new URL(urls[0]);
+                String htmlCode = "";
+
+                htmlCode = XMLparsing.getHTML(urls[0]);
+                htmlCode.replaceAll("&", "&amp;");
+
                 SAXParserFactory mySAXParserFactory = SAXParserFactory.newInstance();
                 SAXParser mySAXParser = mySAXParserFactory.newSAXParser();
                 XMLReader myXMLReader = mySAXParser.getXMLReader();
                 myXMLReader.setContentHandler(myRSSHandler);
-                InputSource myInputSource = new InputSource(rssUrl.openStream());
+                InputSource myInputSource = new InputSource();
+                myInputSource.setCharacterStream(new StringReader(htmlCode));
                 myXMLReader.parse(myInputSource);
 
                 itemList = myRSSHandler.getRssInfoList();
@@ -61,7 +66,7 @@ public class MainActivity extends Activity {
                 //mResult.setText("Cannot connect RSS!");
             } catch (IOException e) {
                 e.printStackTrace();
-               // mResult.setText("Cannot connect RSS!");
+                // mResult.setText("Cannot connect RSS!");
             }
             return null;
         }

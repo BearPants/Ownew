@@ -90,8 +90,8 @@ public class TakeScreenShotActivity extends Activity {
 
                 if (width == 0 || height == 0) {
                     width = wv.getWidth();
-                    height = wv.getHeight();
-                }
+                height = wv.getHeight();
+            }
                 if (height > size.y) {
                     height = size.y;
                 }
