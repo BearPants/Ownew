@@ -2,8 +2,11 @@ package com.example.kang_won.widgetex;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 
 public class SelectRSSFeedActivity extends Activity {
 
+    private Context mContext;
     private ArrayList<IndexList> indexList;
     private AlertDialog tempDialog;
     private String tempUrl;
@@ -23,19 +27,23 @@ public class SelectRSSFeedActivity extends Activity {
     private Button okButton;
     private EditText userFeedText;
     private EditText tempEditText;
-
+    private int widgetID;
+    private DBManager dbManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_select_rssfeed);
+
+        Intent receivedIntent = getIntent();
+        widgetID = receivedIntent.getIntExtra("WidgetID", 0);
+
+        mContext = (Context) this;
         okButton = (Button) findViewById(R.id.OKButton);
         userFeedText = (EditText) findViewById(R.id.setUserFeed);
         indexListView = (ExpandableListView) findViewById(R.id.IndexListView);
-        indexList = getIndexList();
-        indexListView.setAdapter(new BaseExpandableAdapter(this, indexList));
-        setListViewFunction();
-        setButtonFunction();
+
+        updateListView();
     }
 
 
@@ -46,7 +54,25 @@ public class SelectRSSFeedActivity extends Activity {
         temp.add(new IndexList("스포츠"));
         temp.add(new IndexList("연예"));
         temp.add(new IndexList("IT"));
-        temp.add(new IndexList("나의 FEED"));
+
+        dbManager = new DBManager(getApplicationContext());
+
+        String RSSFeed = dbManager.selectDataAtRSS(widgetID, "RSS_feed");
+        String RSSName = dbManager.selectDataAtRSS(widgetID, "RSS_name");
+        int feedCount = dbManager.getRecordCountAtRSS(widgetID);
+
+        Log.d("WidgetID", widgetID + "");
+        Log.d("FeedCount", feedCount + "");
+
+        if(feedCount != 0) {
+            Log.d("RSSFeed", RSSFeed);
+            Log.d("RSSName", RSSName);
+            temp.add(new IndexList("나의 FEED", RSSFeed, RSSName));
+        }
+        else {
+            temp.add(new IndexList("나의 FEED"));
+        }
+
         return temp;
 
     }
@@ -79,6 +105,15 @@ public class SelectRSSFeedActivity extends Activity {
 
     }
 
+    private void updateListView(){
+        indexList = getIndexList();
+        indexListView.setAdapter(new BaseExpandableAdapter(this, indexList));
+
+        setListViewFunction();
+        setButtonFunction();
+
+    }
+
     private AlertDialog addDialog() {
         AlertDialog.Builder temp = new AlertDialog.Builder(this); // 빌더를 얻고
         tempEditText = new EditText(this);
@@ -93,8 +128,24 @@ public class SelectRSSFeedActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                        /*tempUrl과 tempEditText.getText().toString()을 이름으로 디비에 추가하기*/
+                        Log.d("RSSFeed!!!!", tempUrl);
+                        Log.d("RSSName!!!!", tempEditText.getText().toString());
+
+                        int count = dbManager.getRecordCountAtRSS(widgetID);
+                        Log.d("WIDGETID !!!!", widgetID + "");
+                        Log.d("RSSCOUNT !!!!", count + "");
+
+                        if (count != 0) {
+                            dbManager.updateDataAtRSS(widgetID, tempUrl, tempEditText.getText().toString());
+                        } else {
+                            dbManager.insertDataAtRSS(widgetID, tempUrl, tempEditText.getText().toString());
+                        }
+
                         tempUrl = null;
                         indexListView.deferNotifyDataSetChanged();
+
+                        updateListView();
+                        userFeedText.setText("");
 
                     }
                 })
@@ -120,6 +171,13 @@ public class SelectRSSFeedActivity extends Activity {
                 .setPositiveButton("네", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        Intent intent = new Intent(SelectRSSFeedActivity.this, WidgetReceiver.class);
+                        intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.FEED);
+                        //intent.putExtra("WidgetID", widgetID);
+                        intent.putExtra(WidgetReceiver.FEED_KEY, tempUrl);
+                        mContext.sendBroadcast(intent);
+                        finish();
                          /*tempUrl넘기기*/
                         tempUrl = null;
                     }

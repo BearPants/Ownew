@@ -39,7 +39,7 @@ public class SetActivity extends Activity {
     }
 
     public void chooseSetting() {
-        final CharSequence[] items = {"이미지", "색상 설정","RSS"};
+        final CharSequence[] items = {"Browser", "이미지", "색상 설정", "RSS"};
 
         Intent receivedIntent = getIntent();
         widgetID = receivedIntent.getIntExtra("WidgetID", 0);
@@ -60,8 +60,13 @@ public class SetActivity extends Activity {
                     intent.putExtra("WidgetID", widgetID);
                     startActivity(intent);
                     finish();
-                }else if (items[item].equals("RSS")) {
+                } else if (items[item].equals("RSS")) {
                     Intent intent = new Intent(SetActivity.this, SelectRSSFeedActivity.class);
+                    intent.putExtra("WidgetID", widgetID);
+                    startActivity(intent);
+                    finish();
+                } else if (items[item].equals("Browser")) {
+                    Intent intent = new Intent(SetActivity.this, WebViewActivity.class);
                     intent.putExtra("WidgetID", widgetID);
                     startActivity(intent);
                     finish();

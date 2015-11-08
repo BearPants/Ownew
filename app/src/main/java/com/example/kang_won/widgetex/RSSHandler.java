@@ -1,7 +1,5 @@
 package com.example.kang_won.widgetex;
 
-import android.util.Log;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -15,8 +13,9 @@ class RSSHandler extends DefaultHandler {
     private final int STATE_DATE = 4;
     private final int STATE_TUMNAILURL = 5;
     private int currentState = STATE_UNKNOW;
-
+    private boolean complete = false;
     private String str = null;
+    private String strCharacters;
     boolean itemFound = false;
 
     RssInfo rssInfo;
@@ -44,10 +43,11 @@ class RSSHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        Log.d("ElementStart!!!", localName);
+
         if (localName.equalsIgnoreCase("item")) {
             itemFound = true;
             rssInfo = new RssInfo();
+            complete = true;
             currentState = STATE_UNKNOW;
         } else if (localName.equalsIgnoreCase("title")) {
             currentState = STATE_TITLE;
@@ -69,7 +69,7 @@ class RSSHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
 
-        if (localName.equalsIgnoreCase("item")) {
+        if (localName.equalsIgnoreCase("item") && complete) {
             rssInfoList.addItem(rssInfo);
         }
 
@@ -78,9 +78,27 @@ class RSSHandler extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 
-        String strCharacters = new String(ch, start, length);
+        strCharacters = new String(ch, start, length);
 
-        Log.d("!!!!!!!!!!!", strCharacters);
+
+        if ((currentState == STATE_TITLE) && (strCharacters.indexOf("[") != -1)) {
+            currentState = STATE_UNKNOW;
+            complete = false;
+  /*          int i = 0;
+            int count = 0;
+
+            while (count < 2) {
+                if(start+i>=ch.length)
+                if (ch[start + i] == ']') {
+                    count++;
+                }
+                i++;
+            }
+
+            strCharacters = new String(ch, start, i);
+*/
+        }
+
         if (itemFound == true) {
             switch (currentState) {
                 case STATE_TITLE:

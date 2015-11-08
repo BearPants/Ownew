@@ -9,7 +9,8 @@ public class ItemList {
 
     private ArrayList<RssInfo> rssList;
 
-    public ItemList(){
+
+    public ItemList() {
         rssList = new ArrayList<RssInfo>();
     }
 
@@ -17,10 +18,18 @@ public class ItemList {
         rssList.add(rssInfo);
     }
 
-    public String getList(){
+    public String getTitle(int index) {
+        return rssList.get(index).getItemTitle();
+    }
+
+    public String getUrl(int index) {
+        return rssList.get(index).getItemURL();
+    }
+
+    public String getList() {
         String str = "";
 
-        for(int i=0;i<rssList.size();i++){
+        for (int i = 0; i < rssList.size(); i++) {
             str += rssList.get(i).getItemTitle();
             str += "-> Title \n";
             str += rssList.get(i).getItemURL();

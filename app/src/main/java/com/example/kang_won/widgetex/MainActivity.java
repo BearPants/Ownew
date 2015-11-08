@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
     RSSHandler myRSSHandler = new RSSHandler();
     ItemList itemList;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +33,11 @@ public class MainActivity extends Activity {
         mResult = (TextView) findViewById(R.id.xmlTextView);
 
         ProcessXmlTask xmlTask = new ProcessXmlTask();
-        xmlTask.execute("http://rss.joins.com/joins_ilgan_list.xml");
-    }
+        xmlTask.execute("http://rss.moneytoday.co.kr/st_news.xml");
+    }//http://rss.hankooki.com/sports/sp00_list.xml
 
+    //http://rss.moneytoday.co.kr/st_news.xml
+//http://www.chosun.com/site/data/rss/rss.xml
     private class ProcessXmlTask extends AsyncTask<String, Void, Void> {
 
         protected Void doInBackground(String... urls) {
@@ -43,13 +46,13 @@ public class MainActivity extends Activity {
                 String htmlCode = "";
 
                 htmlCode = XMLparsing.getHTML(urls[0]);
-                htmlCode.replaceAll("&", "&amp;");
-
+                htmlCode.replaceAll("&", "&amp");
                 SAXParserFactory mySAXParserFactory = SAXParserFactory.newInstance();
                 SAXParser mySAXParser = mySAXParserFactory.newSAXParser();
                 XMLReader myXMLReader = mySAXParser.getXMLReader();
                 myXMLReader.setContentHandler(myRSSHandler);
                 InputSource myInputSource = new InputSource();
+                myInputSource.setEncoding("UTF-8");
                 myInputSource.setCharacterStream(new StringReader(htmlCode));
                 myXMLReader.parse(myInputSource);
 

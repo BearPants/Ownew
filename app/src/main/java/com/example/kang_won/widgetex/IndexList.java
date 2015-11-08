@@ -1,5 +1,7 @@
 package com.example.kang_won.widgetex;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -13,6 +15,12 @@ public class IndexList {
         this.title = title;
         this.contentsList = getContents();
 
+    }
+
+    public IndexList(String title, String RSSFeed, String RSSName) {
+        Log.d("IndexLIST", "!!!!!!!!!!!!!!1");
+        this.title = title;
+        this.contentsList = getContents(RSSFeed, RSSName);
     }
 
     public String getTItle() {
@@ -44,13 +52,24 @@ public class IndexList {
         }
         if (this.title.equals("연예")) {
             temp.add(new ContentsList("스타뉴스", "http://rss.moneytoday.co.kr/st_news.xml", R.mipmap.starnews));
-
         }
         if (this.title.equals("IT")) {
             temp.add(new ContentsList("ComputerWeekly", "http://www.computerweekly.com/rss/Latest-IT-news.xml", R.mipmap.cw));
         }
         if (this.title.equals("나의FEED")) {
 /*디비에서 받아올 수 있게 해야함*/
+        }
+
+        return temp;
+    }
+
+    private ArrayList<ContentsList> getContents(String RSSFeed, String RSSName) {
+        ArrayList<ContentsList> temp = new ArrayList<ContentsList>();
+
+        if (this.title.equals("나의 FEED")) {
+            /*디비에서 받아올 수 있게 해야함*/
+            Log.d("SUCCESS!!!!!!!!!!!", "SUCCESS!!!!!!!!!!");
+            temp.add(new ContentsList(RSSName, RSSFeed));
         }
 
         return temp;
