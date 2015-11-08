@@ -34,6 +34,7 @@ public class TakeScreenShotActivity extends Activity {
     private Context mContext;
     private Bitmap bitmap;
     private ByteArrayOutputStream stream;
+    private int width, height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,23 @@ public class TakeScreenShotActivity extends Activity {
                 super.onPageFinished(webView, url);
                 Log.d("WebView", "onPageFinished !!!!!!!!!!!");
 
-                int width, height;
+                setBitmap();
+
+            }
+        });
+
+        wv.loadDataWithBaseURL("", html, mimeType, encoding, "");
+        httpGetTask.cancel(true);
+        wv.setVisibility(View.INVISIBLE);
+    }
+
+    void setBitmap() {
+
+
+        wv.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
 
                 specWidth = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 wv.measure(specWidth, specWidth);
@@ -90,32 +107,17 @@ public class TakeScreenShotActivity extends Activity {
 
                 if (width == 0 || height == 0) {
                     width = wv.getWidth();
-                height = wv.getHeight();
-            }
+                    height = wv.getHeight();
+                }
+
                 if (height > size.y) {
                     height = size.y;
                 }
                 if (width > size.x) {
                     width = size.x;
                 }
-                setBitmap(width, height);
-
-            }
-        });
-
-        wv.loadDataWithBaseURL("", html, mimeType, encoding, "");
-        httpGetTask.cancel(true);
-        wv.setVisibility(View.INVISIBLE);
-    }
-
-    void setBitmap(final int width, final int height) {
-
-        wv.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                String location = Environment.getExternalStorageDirectory().getAbsolutePath()+"/temp.PNG";
-                File file=new File(location);
+                String location = Environment.getExternalStorageDirectory().getAbsolutePath() + "/temp.PNG";
+                File file = new File(location);
                 try {
                     FileOutputStream filestream = new FileOutputStream(file);
                     file.createNewFile();

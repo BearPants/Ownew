@@ -73,31 +73,28 @@ public class WidgetEx extends AppWidgetProvider {
         // URL 있으면 -> 브라우저
         // URL 없으면 -> 웹뷰
 
-        if (recordCount == 0) {
-            Log.d("!!!!!!!!!!!First", "" + recordCount);
-            webViewIntent = new Intent(context, WebViewActivity.class);
-            webViewIntent.putExtra("WidgetID", appWidgetId);
-            Log.d("WidgetID!!!!!!!!", appWidgetId + "");
-        } else {
-            Log.d("!!!!!!!!!!!NotFirst", "fdfsfdsfdsfsdf");
+        if (recordCount > 0) {
             String url = dbManager.selectDataAtBookmark(appWidgetId);
             webViewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, appWidgetId, webViewIntent, 0);
+            remoteViews.setOnClickPendingIntent(R.id.imageView, webViewPendingIntent);
         }
-
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
-        PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, appWidgetId, webViewIntent, 0);
-
-        // remoteViews.setOnClickPendingIntent(R.id.widgetLayout, webViewPendingIntent);
         remoteViews.setOnClickPendingIntent(R.id.settingButton, pendingIntent);
 
         /**********새로 추가 각 textview에 설정**********/
-        for (int i = 0; i < 5; i++) {
-            //url 에 각 textView에 설정된 url 할당하기
-            String url = "http://www.naver.com";
-            Intent tempIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            tempIntent.putExtra("WidgetID", appWidgetId);
-            newsIntents[i] = PendingIntent.getActivity(context, appWidgetId, tempIntent, 0);
+        String[] newsURLs = dbManager.selectDataByWidgetIdAtRSSItem(appWidgetId, "itemURL");
+        if (newsURLs.length > 0) {
+            for (int i = 0; i < 5; i++) {
+                //url 에 각 textView에 설정된 url 할당하기
+                String tempUrl = newsURLs[i];
+                Intent tempIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tempUrl));
+                tempIntent.putExtra("WidgetID", appWidgetId);
+                newsIntents[i] = PendingIntent.getActivity(context, appWidgetId, tempIntent, 0);
+            }
         }
+
+
         remoteViews.setOnClickPendingIntent(R.id.news1, newsIntents[0]);
         remoteViews.setOnClickPendingIntent(R.id.news2, newsIntents[1]);
         remoteViews.setOnClickPendingIntent(R.id.news3, newsIntents[2]);

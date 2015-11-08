@@ -12,7 +12,9 @@ public class DBManager {
 
     private static final String dbName = "Ownew.db";
     private static final String tableName = "Bookmark";
+    private static final String tableMyfeed = "Myfeed";
     private static final String tableRSS = "RSS";
+    private static final String tableRSSItem = "RSSItem";
     public static final int dbVersion = 1;
 
     private OpenHelper opener;
@@ -34,13 +36,17 @@ public class DBManager {
 
         public void onCreate(SQLiteDatabase arg0){
             String createBookmarkSQL = "CREATE TABLE " + tableName + " ("
-                    + "widgetId integer primary key autoincrement, " + "url text)";
+                    + "widgetId integer primary key, url text)";
 
-            String createRssSQL = "CREATE TABLE " + tableRSS + " ("
-                    + "widgetId integer primary key autoincrement, " + " RSS_feed text, RSS_name text)";
+            String createMyfeedSQL = "CREATE TABLE " + tableMyfeed + " ("
+                    + "num integer primary key, widgetId integer, RSS_feed text, RSS_name text)";
+
+            String createRSSItemSQL = "CREATE TABLE " + tableRSSItem + " ("
+                    + "num integer primary key, widgetId integer, itemURL text)";
 
             arg0.execSQL(createBookmarkSQL);
-            arg0.execSQL(createRssSQL);
+            arg0.execSQL(createMyfeedSQL);
+            arg0.execSQL(createRSSItemSQL);
         }
 
         public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2){
@@ -48,8 +54,15 @@ public class DBManager {
         }
     }
 
-    public void insertDataAtRSS(int widgetId, String RSSFeed, String RSSName){
-        String insertQuery = "INSERT INTO " + tableRSS + " VALUES(" + widgetId + ", '"
+    public void insertDataAtRSSItem(int widgetId, String itemURL){
+        String insertQuery = "INSERT INTO " + tableRSSItem + "(widgetId, itemURL) VALUES(" + widgetId + ", '"
+                + itemURL + "')";
+
+        db.execSQL(insertQuery);
+    }
+
+    public void insertDataAtMyfeed(int widgetId, String RSSFeed, String RSSName){
+        String insertQuery = "INSERT INTO " + tableMyfeed + "(widgetId, RSS_feed, RSS_name) VALUES(" + widgetId + ", '"
                 + RSSFeed + "', '" + RSSName + "')";
 
         db.execSQL(insertQuery);
@@ -67,8 +80,8 @@ public class DBManager {
         db.execSQL(updateQuery);
     }
 
-    public void updateDataAtRSS(int widgetId, String RSSFeed, String RSSName){
-        String updateQuery = "UPDATE " + tableRSS + " SET RSS_feed='" + RSSFeed + "',RSS_name='" + RSSName + "' WHERE widgetId=" + widgetId + ";";
+    public void updateDataAtMyfeed(int widgetId, String RSSFeed, String RSSName){
+        String updateQuery = "UPDATE " + tableMyfeed + " SET RSS_feed='" + RSSFeed + "',RSS_name='" + RSSName + "' WHERE widgetId=" + widgetId + ";";
         db.execSQL(updateQuery);
     }
 
@@ -78,28 +91,59 @@ public class DBManager {
         db.execSQL(deleteQuery);
     }
 
-    public String selectDataAtRSS(int widgetId, String targetColumnName){
-        String selectQuery = "SELECT * FROM " + tableRSS + " WHERE widgetId=" + widgetId + ";";
+    public String[] selectDataByWidgetIdAtRSSItem(int widgetId, String targetColumnName){
+        String selectQuery = "SELECT * FROM " + tableRSSItem + " WHERE widgetId=" + widgetId + ";";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
-        String resultURL;
+        int count = cursor.getCount();
+        int i = 0 ;
 
-        if(cursor.moveToFirst()){
+        String[] result = new String[count];
 
-            switch(targetColumnName){
-                case "RSS_feed":
-                    resultURL = cursor.getString(cursor.getColumnIndex("RSS_feed"));
-                    return resultURL;
-                case "RSS_name":
-                    resultURL = cursor.getString(cursor.getColumnIndex("RSS_name"));
-                    return resultURL;
+        if(cursor != null){
+
+            while(cursor.moveToNext()){
+
+                if(targetColumnName.equals("itemURL")){
+                    result[i++] = cursor.getString(cursor.getColumnIndex("itemURL"));
+                }
             }
-
-            cursor.close();
+        }
+        else {
+            return null;
         }
 
         cursor.close();
-        return null;
+
+        return result;
+    }
+
+    public String[] selectDataByWidgetIdAtMyfeed(int widgetId, String targetColumnName){
+        String selectQuery = "SELECT * FROM " + tableMyfeed + " WHERE widgetId=" + widgetId + ";";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int count = cursor.getCount();
+        int i = 0 ;
+
+        String[] result = new String[count];
+
+        if(cursor != null){
+            while(cursor.moveToNext()){
+
+                if(targetColumnName.equals("RSS_feed")){
+                    result[i++] = cursor.getString(cursor.getColumnIndex("RSS_feed"));
+                }
+                else if(targetColumnName.equals("RSS_name")) {
+                    result[i++] = cursor.getString(cursor.getColumnIndex("RSS_name"));
+                }
+            }
+        }
+        else {
+            return null;
+        }
+
+        cursor.close();
+        return result;
     }
 
     public String selectDataAtBookmark(int widgetId){
@@ -129,8 +173,8 @@ public class DBManager {
         return resultCount;
     }
 
-    public int getRecordCountAtRSS(int widgetId){
-        String selectQuery = "SELECT * FROM " + tableRSS + " WHERE widgetId=" + widgetId + ";";
+    public int getRecordCountAtMyfeed(int widgetId){
+        String selectQuery = "SELECT * FROM " + tableMyfeed + " WHERE widgetId=" + widgetId + ";";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 

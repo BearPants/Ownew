@@ -29,6 +29,12 @@ public class SelectRSSFeedActivity extends Activity {
     private EditText tempEditText;
     private int widgetID;
     private DBManager dbManager;
+    private int itemType;
+
+    private final int YOUTUBE_RSS = 10;
+    private final int NEWS_RSS = 11;
+    private final int UNKNOWN = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,32 +55,30 @@ public class SelectRSSFeedActivity extends Activity {
 
     private ArrayList<IndexList> getIndexList() {
         ArrayList<IndexList> temp = new ArrayList<IndexList>();
+
         temp.add(new IndexList("뉴스"));
         temp.add(new IndexList("날씨"));
         temp.add(new IndexList("스포츠"));
         temp.add(new IndexList("연예"));
         temp.add(new IndexList("IT"));
+        temp.add(new IndexList("YOUTUBE"));
 
         dbManager = new DBManager(getApplicationContext());
 
-        String RSSFeed = dbManager.selectDataAtRSS(widgetID, "RSS_feed");
-        String RSSName = dbManager.selectDataAtRSS(widgetID, "RSS_name");
-        int feedCount = dbManager.getRecordCountAtRSS(widgetID);
+        int feedCount = dbManager.getRecordCountAtMyfeed(widgetID);
+        String[] RSSFeed = dbManager.selectDataByWidgetIdAtMyfeed(widgetID, "RSS_feed");
+        String[] RSSName = dbManager.selectDataByWidgetIdAtMyfeed(widgetID, "RSS_name");
 
         Log.d("WidgetID", widgetID + "");
         Log.d("FeedCount", feedCount + "");
 
-        if(feedCount != 0) {
-            Log.d("RSSFeed", RSSFeed);
-            Log.d("RSSName", RSSName);
+        if (feedCount != 0) {
             temp.add(new IndexList("나의 FEED", RSSFeed, RSSName));
-        }
-        else {
+        } else {
             temp.add(new IndexList("나의 FEED"));
         }
 
         return temp;
-
     }
 
     private void setButtonFunction() {
@@ -97,6 +101,10 @@ public class SelectRSSFeedActivity extends Activity {
                                         int groupPosition, int childPosition, long id) {
                 tempUrl = indexList.get(groupPosition).getContentsList().get(childPosition).getUrl();
                 tempName = indexList.get(groupPosition).getContentsList().get(childPosition).getName();
+                if (groupPosition == 5)
+                    itemType = YOUTUBE_RSS;
+                else
+                    itemType = NEWS_RSS;
                 tempDialog = createDialog(tempName);
                 tempDialog.show();
                 return false;
@@ -105,7 +113,7 @@ public class SelectRSSFeedActivity extends Activity {
 
     }
 
-    private void updateListView(){
+    private void updateListView() {
         indexList = getIndexList();
         indexListView.setAdapter(new BaseExpandableAdapter(this, indexList));
 
@@ -131,15 +139,11 @@ public class SelectRSSFeedActivity extends Activity {
                         Log.d("RSSFeed!!!!", tempUrl);
                         Log.d("RSSName!!!!", tempEditText.getText().toString());
 
-                        int count = dbManager.getRecordCountAtRSS(widgetID);
+                        int count = dbManager.getRecordCountAtMyfeed(widgetID);
                         Log.d("WIDGETID !!!!", widgetID + "");
                         Log.d("RSSCOUNT !!!!", count + "");
 
-                        if (count != 0) {
-                            dbManager.updateDataAtRSS(widgetID, tempUrl, tempEditText.getText().toString());
-                        } else {
-                            dbManager.insertDataAtRSS(widgetID, tempUrl, tempEditText.getText().toString());
-                        }
+                        dbManager.insertDataAtMyfeed(widgetID, tempUrl, tempEditText.getText().toString());
 
                         tempUrl = null;
                         indexListView.deferNotifyDataSetChanged();
@@ -174,12 +178,14 @@ public class SelectRSSFeedActivity extends Activity {
 
                         Intent intent = new Intent(SelectRSSFeedActivity.this, WidgetReceiver.class);
                         intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.FEED);
-                        //intent.putExtra("WidgetID", widgetID);
+                        intent.putExtra("WidgetID", widgetID);
                         intent.putExtra(WidgetReceiver.FEED_KEY, tempUrl);
+                        intent.putExtra(WidgetReceiver.RSS_TYPE, itemType);
                         mContext.sendBroadcast(intent);
                         finish();
                          /*tempUrl넘기기*/
                         tempUrl = null;
+                        itemType = UNKNOWN;
                     }
                 })
                 .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
@@ -187,6 +193,7 @@ public class SelectRSSFeedActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         tempUrl = null;
                         tempName = null;
+                        itemType = UNKNOWN;
                     }
                 });
 

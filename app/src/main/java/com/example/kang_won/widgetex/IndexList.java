@@ -17,7 +17,7 @@ public class IndexList {
 
     }
 
-    public IndexList(String title, String RSSFeed, String RSSName) {
+    public IndexList(String title, String[] RSSFeed, String[] RSSName) {
         Log.d("IndexLIST", "!!!!!!!!!!!!!!1");
         this.title = title;
         this.contentsList = getContents(RSSFeed, RSSName);
@@ -56,6 +56,9 @@ public class IndexList {
         if (this.title.equals("IT")) {
             temp.add(new ContentsList("ComputerWeekly", "http://www.computerweekly.com/rss/Latest-IT-news.xml", R.mipmap.cw));
         }
+        if (this.title.equals("YOUTUBE")) {
+            temp.add(new ContentsList("해물파전", "http://www.youtube.com/feeds/videos.xml?user=dlgksquf159", R.mipmap.naver));
+        }
         if (this.title.equals("나의FEED")) {
 /*디비에서 받아올 수 있게 해야함*/
         }
@@ -63,13 +66,18 @@ public class IndexList {
         return temp;
     }
 
-    private ArrayList<ContentsList> getContents(String RSSFeed, String RSSName) {
+    private ArrayList<ContentsList> getContents(String[] RSSFeed, String[] RSSName) {
         ArrayList<ContentsList> temp = new ArrayList<ContentsList>();
 
         if (this.title.equals("나의 FEED")) {
             /*디비에서 받아올 수 있게 해야함*/
             Log.d("SUCCESS!!!!!!!!!!!", "SUCCESS!!!!!!!!!!");
-            temp.add(new ContentsList(RSSName, RSSFeed));
+
+            int count = RSSFeed.length;
+
+            for (int i = 0; i < count; i++) {
+                temp.add(new ContentsList(RSSName[i], RSSFeed[i]));
+            }
         }
 
         return temp;

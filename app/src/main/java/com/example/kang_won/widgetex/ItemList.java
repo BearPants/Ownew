@@ -9,8 +9,10 @@ public class ItemList {
 
     private ArrayList<RssInfo> rssList;
 
+    private int itemType;
 
-    public ItemList() {
+    public ItemList(int itemType) {
+        this.itemType = itemType;
         rssList = new ArrayList<RssInfo>();
     }
 
@@ -24,6 +26,10 @@ public class ItemList {
 
     public String getUrl(int index) {
         return rssList.get(index).getItemURL();
+    }
+
+    public String getThumnailURL(int index) {
+        return rssList.get(index).getItemThumnailURL();
     }
 
     public String getList() {
