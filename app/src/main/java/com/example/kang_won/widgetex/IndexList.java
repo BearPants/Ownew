@@ -57,7 +57,7 @@ public class IndexList {
             temp.add(new ContentsList("ComputerWeekly", "http://www.computerweekly.com/rss/Latest-IT-news.xml", R.mipmap.cw));
         }
         if (this.title.equals("YOUTUBE")) {
-            temp.add(new ContentsList("해물파전", "http://www.youtube.com/feeds/videos.xml?user=dlgksquf159", R.mipmap.naver));
+            temp.add(new ContentsList("해물파전", "http://www.youtube.com/feeds/videos.xml?user=dlgksquf159", R.mipmap.pajun));
         }
         if (this.title.equals("나의FEED")) {
 /*디비에서 받아올 수 있게 해야함*/
