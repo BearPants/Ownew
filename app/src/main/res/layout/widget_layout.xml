@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -107,10 +108,11 @@
             android:id="@+id/rss_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFF5F5F5"
+            android:background="#00000000"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/utube1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -139,6 +141,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/utube2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -169,6 +172,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/utube3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -198,6 +202,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/utube4"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -217,7 +222,6 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="4"
                     android:fontFamily="arial"
-
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textColor="#111111" />
@@ -229,15 +233,26 @@
 
     </FrameLayout>
 
-    <Button
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <ImageButton
         android:id="@+id/settingButton"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="설정" />
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        android:src="@mipmap/add" />
 
 
 </RelativeLayout>

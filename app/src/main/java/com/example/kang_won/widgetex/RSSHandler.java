@@ -12,6 +12,7 @@ class RSSHandler extends DefaultHandler {
     private final int STATE_DESCRIPTION = 3;
     private final int STATE_DATE = 4;
     private final int STATE_TUMNAILURL = 5;
+    private final int STATE_LINK = 6;
     private int currentState = STATE_UNKNOW;
     private boolean complete = false;
     private String str = null;
@@ -61,6 +62,9 @@ class RSSHandler extends DefaultHandler {
                     currentState = STATE_TUMNAILURL;
                 } else if (qName.equalsIgnoreCase("media:title")) {
                     currentState = STATE_TITLE;
+                } else if (qName.equalsIgnoreCase("link")) {
+                    currentState = STATE_LINK;
+                    str = attributes.getValue(1);
                 } else {
                     currentState = STATE_UNKNOW;
                 }
@@ -138,6 +142,9 @@ class RSSHandler extends DefaultHandler {
                             break;
                         case STATE_TUMNAILURL:
                             rssInfo.setItemThumnailURL(str);
+                            break;
+                        case STATE_LINK:
+                            rssInfo.setItemURL(str);
                             break;
                         default:
                             break;

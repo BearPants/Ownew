@@ -2,7 +2,6 @@ package com.example.kang_won.widgetex;
 
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -87,11 +86,21 @@ public class WidgetReceiver extends BroadcastReceiver {
             Bitmap bitmap = createBitmapImage(intent.getStringExtra(IMAGE_PATH_KEY));
             views.setImageViewBitmap(R.id.imageView, bitmap);
             changeViewVisibility(views, IMAGE_PATH);
+            if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
+                dbManager.updateDataAtWidgetState(widgetID, 0);
+            } else {
+                dbManager.insertDataAtWidgetState(widgetID, 0);
+            }
+
         } else if (state == COLOR) {
             int colorCode = intent.getIntExtra(COLOR_KEY, -1);
             views.setInt(R.id.colorView, "setBackgroundColor", colorCode);
             changeViewVisibility(views, COLOR);
-
+            if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
+                dbManager.updateDataAtWidgetState(widgetID, 1);
+            } else {
+                dbManager.insertDataAtWidgetState(widgetID, 1);
+            }
         } else if (state == SCREENSHOT) {
             Log.d("ScreenshotBroadCast", "GET BITMAP");
             String location = intent.getStringExtra(SCREENSHOT_KEY);
@@ -100,26 +109,21 @@ public class WidgetReceiver extends BroadcastReceiver {
             changeViewVisibility(views, IMAGE_PATH);
             File temp = new File(location);
             temp.delete();
+            if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
+                dbManager.updateDataAtWidgetState(widgetID, 2);
+            } else {
+                dbManager.insertDataAtWidgetState(widgetID, 2);
+            }
         } else if (state == FEED) {
-
             type = intent.getIntExtra(RSS_TYPE, 0);
-
-
-            views.setInt(R.id.news1, "setVisibility", View.VISIBLE);
             myRSSHandler = new RSSHandler();
             myRSSHandler.setItemType(type);
             String feedUrl = intent.getStringExtra(FEED_KEY);
-
             ProcessXmlTask xmlTask = new ProcessXmlTask();
             xmlTask.execute(feedUrl);
-
-            views.setTextViewText(R.id.news1, "dddd");
             appWidgetManager.updateAppWidget(widgetID, views);
-        } else if (state == RSSLIST) {
-            ProcessXmlTask xmlTask = new ProcessXmlTask();
-            xmlTask.execute(intent.getStringExtra(RSS_URL));
+
         }
-        //appWidgetManager.updateAppWidget(new ComponentName(context, WidgetEx.class), views);
 
         appWidgetManager.updateAppWidget(widgetID, views);
 
@@ -220,6 +224,11 @@ public class WidgetReceiver extends BroadcastReceiver {
             count = 0;
             switch (type) {
                 case YOUTUBE_RSS:
+                    if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
+                        dbManager.updateDataAtWidgetState(widgetID, 4);
+                    } else {
+                        dbManager.insertDataAtWidgetState(widgetID, 4);
+                    }
                     bitmaps = new ArrayList<Bitmap>();
                     ivList = new ArrayList<Integer>();
                     tvList = new ArrayList<Integer>();
@@ -232,28 +241,50 @@ public class WidgetReceiver extends BroadcastReceiver {
                     tvList.add(R.id.tv3);
                     tvList.add(R.id.tv4);
 
-                    new LoadImage().execute(itemList.getThumnailURL(0));
-                    new LoadImage().execute(itemList.getThumnailURL(1));
-                    new LoadImage().execute(itemList.getThumnailURL(2));
-                    new LoadImage().execute(itemList.getThumnailURL(3));
+                    int count2 = 4;
+                    int lastItemCount = dbManager.getRecordCountAtRSSItem(widgetID);
+                    if (count2 > itemList.getNumberOfItem()) {
+                        count2 = itemList.getNumberOfItem();
+                    }
+                    for (int i = 0; i < lastItemCount; i++) {
+                        dbManager.deleteDataAtRSSItem(i, widgetID);
+                    }
+
+                    for (int i = 0; i < count2; i++) {
+                        dbManager.insertDataAtRSSItem(i, widgetID, itemList.getUrl(i));
+                        new LoadImage().execute(itemList.getThumnailURL(i));
+                    }
+                    sendBroadCastForOnUpdate();
+
 
                     break;
                 case NEWS_RSS:
+                    if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
+                        dbManager.updateDataAtWidgetState(widgetID, 3);
+                    } else {
+                        dbManager.insertDataAtWidgetState(widgetID, 3);
+                    }
                     RemoteViews views = new RemoteViews(rssContext.getPackageName(), R.layout.widget_layout);
-                    String[] newsUrls = new String[5];
-                    for (int i = 1; i <= 5; i++) {
-                         dbManager.insertDataAtRSSItem(widgetID, itemList.getUrl(i));
+                    int count3 = 5;
+                    int lastItemCount2 = dbManager.getRecordCountAtRSSItem(widgetID);
+                    int[] viewIds = {R.id.news1, R.id.news2, R.id.news3, R.id.news4, R.id.news5};
+
+                    if (count3 > itemList.getNumberOfItem()) {
+                        count3 = itemList.getNumberOfItem();
+                    }
+                    for (int i = 0; i < lastItemCount2; i++) {
+                        dbManager.deleteDataAtRSSItem(i, widgetID);
+                    }
+                    for (int i = 0; i < count3; i++) {
+                        dbManager.insertDataAtRSSItem(i, widgetID, itemList.getUrl(i));
+                        views.setTextViewText(viewIds[i], itemList.getTitle(i));
                     }
 
-                    views.setTextViewText(R.id.news1, itemList.getTitle(1));
-                    views.setTextViewText(R.id.news2, itemList.getTitle(2));
-                    views.setTextViewText(R.id.news3, itemList.getTitle(3));
-                    views.setTextViewText(R.id.news4, itemList.getTitle(4));
-                    views.setTextViewText(R.id.news5, itemList.getTitle(5));
                     changeViewVisibility(views, FEED);
                     sendBroadCastForOnUpdate();
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(rssContext);
                     appWidgetManager.updateAppWidget(widgetID, views);
+
                     break;
                 default:
                     break;
@@ -286,11 +317,9 @@ public class WidgetReceiver extends BroadcastReceiver {
 
             youtube_views.setTextViewText(tvList.get(count), itemList.getTitle(count));
             youtube_views.setImageViewBitmap(ivList.get(count), bitmaps.get(count));
-            Log.e("dlksafjlksdjflkasdjf", "아 쒸발: " + count);
-
             changeViewVisibility(youtube_views, RSSLIST);
             AppWidgetManager youtube_appWidgetManager = AppWidgetManager.getInstance(rssContext);
-            youtube_appWidgetManager.updateAppWidget(new ComponentName(rssContext, WidgetEx.class), youtube_views);
+            youtube_appWidgetManager.updateAppWidget(widgetID, youtube_views);
             count++;
         }
     }

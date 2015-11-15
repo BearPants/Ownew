@@ -11,16 +11,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBManager {
 
     private static final String dbName = "Ownew.db";
-    private static final String tableName = "Bookmark";
+    private static final String tableBookmark = "Bookmark";
     private static final String tableMyfeed = "Myfeed";
-    private static final String tableRSS = "RSS";
+    // private static final String tableRSS = "RSS";
     private static final String tableRSSItem = "RSSItem";
+    private static final String tableWidgetState = "WidgetState";
+
     public static final int dbVersion = 1;
 
     private OpenHelper opener;
     private SQLiteDatabase db;
 
     private Context context;
+    private String[] tableArray = {tableBookmark, tableMyfeed, tableRSSItem, tableWidgetState};
 
     public DBManager(Context context){
         this.context = context;
@@ -35,18 +38,22 @@ public class DBManager {
         }
 
         public void onCreate(SQLiteDatabase arg0){
-            String createBookmarkSQL = "CREATE TABLE " + tableName + " ("
+            String createBookmarkSQL = "CREATE TABLE " + tableBookmark + " ("
                     + "widgetId integer primary key, url text)";
 
             String createMyfeedSQL = "CREATE TABLE " + tableMyfeed + " ("
                     + "num integer primary key, widgetId integer, RSS_feed text, RSS_name text)";
 
             String createRSSItemSQL = "CREATE TABLE " + tableRSSItem + " ("
-                    + "num integer primary key, widgetId integer, itemURL text)";
+                    + "num integer, widgetId integer, itemURL text, primary key(num, widgetId))";
+
+            String createWidgetState = "CREATE TABLE " + tableWidgetState + " ("
+                    + "num integer primary key, widgetId integer, widgetState integer)";
 
             arg0.execSQL(createBookmarkSQL);
             arg0.execSQL(createMyfeedSQL);
             arg0.execSQL(createRSSItemSQL);
+            arg0.execSQL(createWidgetState);
         }
 
         public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2){
@@ -54,8 +61,8 @@ public class DBManager {
         }
     }
 
-    public void insertDataAtRSSItem(int widgetId, String itemURL){
-        String insertQuery = "INSERT INTO " + tableRSSItem + "(widgetId, itemURL) VALUES(" + widgetId + ", '"
+    public void insertDataAtRSSItem(int num, int widgetId, String itemURL){
+        String insertQuery = "INSERT INTO " + tableRSSItem + "(num, widgetId, itemURL) VALUES("+ num + ", " + widgetId + ", '"
                 + itemURL + "')";
 
         db.execSQL(insertQuery);
@@ -69,14 +76,26 @@ public class DBManager {
     }
 
     public void insertDataAtBookmark(int widgetId, String url){
-        String insertQuery = "INSERT INTO " + tableName + " VALUES(" + widgetId + ", '"
+        String insertQuery = "INSERT INTO " + tableBookmark + " VALUES(" + widgetId + ", '"
                 + url + "')";
 
         db.execSQL(insertQuery);
     }
 
-    public void updateData(int widgetId, String url){
-        String updateQuery = "UPDATE " + tableName + " SET url='" + url + "' WHERE widgetId=" + widgetId + ";";
+    public void insertDataAtWidgetState(int widgetId, int state){
+        String insertQuery = "INSERT INTO " + tableWidgetState + "(widgetId, widgetState) VALUES(" + widgetId + ", "
+                + state + ")";
+
+        db.execSQL(insertQuery);
+    }
+
+    public void updateDataAtBookmark(int widgetId, String url){
+        String updateQuery = "UPDATE " + tableBookmark + " SET url='" + url + "' WHERE widgetId=" + widgetId + ";";
+        db.execSQL(updateQuery);
+    }
+
+    public void updateDataAtRSSItem(int num, int widgetId, String itemURL){
+        String updateQuery = "UPDATE " + tableRSSItem + " SET itemURL='" + itemURL + "' WHERE num=" + num + " AND widgetId=" + widgetId + ";";
         db.execSQL(updateQuery);
     }
 
@@ -85,10 +104,22 @@ public class DBManager {
         db.execSQL(updateQuery);
     }
 
+    public void updateDataAtWidgetState(int widgetId, int state){
+        String updateQuery = "UPDATE " + tableWidgetState + " SET widgetState=" + state + " WHERE widgetId=" + widgetId + ";";
+        db.execSQL(updateQuery);
+    }
 
-    public void deleteData(int widgetId){
-        String deleteQuery = "DELETE FROM " + tableName + " WHERE widgetId=" + widgetId + ";";
+    public void deleteDataAtRSSItem(int num, int widgetId){
+        String deleteQuery = "DELETE FROM " + tableRSSItem + " WHERE num=" + num + " AND widgetId=" + widgetId + ";";
         db.execSQL(deleteQuery);
+    }
+
+    public void deleteDataAtAllTable(int widgetId){
+
+        for(int i=0;i<tableArray.length;i++){
+            String deleteQuery = "DELETE FROM " + tableArray[i] + " WHERE widgetId=" + widgetId + ";";
+            db.execSQL(deleteQuery);
+        }
     }
 
     public String[] selectDataByWidgetIdAtRSSItem(int widgetId, String targetColumnName){
@@ -147,7 +178,7 @@ public class DBManager {
     }
 
     public String selectDataAtBookmark(int widgetId){
-        String selectQuery = "SELECT * FROM " + tableName + " WHERE widgetId=" + widgetId + ";";
+        String selectQuery = "SELECT * FROM " + tableBookmark + " WHERE widgetId=" + widgetId + ";";
         Cursor cursor = db.rawQuery(selectQuery, null);
         String resultURL;
 
@@ -161,8 +192,23 @@ public class DBManager {
         return null;
     }
 
+    public int selectDataAtWidgetState(int widgetId){
+        String selectQuery = "SELECT * FROM " + tableWidgetState + " WHERE widgetId=" + widgetId + ";";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int state = -1;
+
+        if(cursor.moveToFirst()){
+            state = cursor.getInt(cursor.getColumnIndex("widgetState"));
+            cursor.close();
+            return state;
+        }
+
+        cursor.close();
+        return state;
+    }
+
     public int getRecordCountAtBookmark(int widgetId){
-        String selectQuery = "SELECT * FROM " + tableName + " WHERE widgetId=" + widgetId + ";";
+        String selectQuery = "SELECT * FROM " + tableBookmark + " WHERE widgetId=" + widgetId + ";";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -175,6 +221,30 @@ public class DBManager {
 
     public int getRecordCountAtMyfeed(int widgetId){
         String selectQuery = "SELECT * FROM " + tableMyfeed + " WHERE widgetId=" + widgetId + ";";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        int resultCount = cursor.getCount();
+
+        cursor.close();
+
+        return resultCount;
+    }
+
+    public int getRecordCountAtRSSItem(int widgetId){
+        String selectQuery = "SELECT * FROM " + tableRSSItem + " WHERE widgetId=" + widgetId + ";";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        int resultCount = cursor.getCount();
+
+        cursor.close();
+
+        return resultCount;
+    }
+
+    public int getRecordCountAtWidgetState(int widgetId){
+        String selectQuery = "SELECT * FROM " + tableWidgetState + " WHERE widgetId=" + widgetId + ";";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 

@@ -14,6 +14,8 @@ import android.widget.RemoteViews;
 public class WidgetEx extends AppWidgetProvider {
 
     private static DBManager dbManager;
+    private int newsViewIds[] = {R.id.news1, R.id.news2, R.id.news3, R.id.news4, R.id.news5};
+    private int utubeViewIds[] = {R.id.utube1, R.id.utube2, R.id.utube3, R.id.utube4};
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -39,7 +41,7 @@ public class WidgetEx extends AppWidgetProvider {
 
             if (recordCount != 0) {
                 Log.d("!!!!!!!!!!!DELETE", "" + recordCount);
-                dbManager.deleteData(appWidgetId);
+                dbManager.deleteDataAtAllTable(appWidgetId);
             }
         }
 
@@ -84,23 +86,32 @@ public class WidgetEx extends AppWidgetProvider {
 
         /**********새로 추가 각 textview에 설정**********/
         String[] newsURLs = dbManager.selectDataByWidgetIdAtRSSItem(appWidgetId, "itemURL");
-        if (newsURLs.length > 0) {
-            for (int i = 0; i < 5; i++) {
-                //url 에 각 textView에 설정된 url 할당하기
-                String tempUrl = newsURLs[i];
-                Intent tempIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tempUrl));
-                tempIntent.putExtra("WidgetID", appWidgetId);
-                newsIntents[i] = PendingIntent.getActivity(context, appWidgetId, tempIntent, 0);
+        if (dbManager.selectDataAtWidgetState(appWidgetId) == 3) {
+
+            if (newsURLs.length > 0) {
+                for (int i = 0; i < newsURLs.length; i++) {
+                    //url 에 각 textView에 설정된 url 할당하기
+                    String tempUrl = newsURLs[i];
+                    Intent tempIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tempUrl));
+                    tempIntent.putExtra("WidgetID", appWidgetId);
+                    newsIntents[i] = PendingIntent.getActivity(context, appWidgetId, tempIntent, 0);
+                    remoteViews.setOnClickPendingIntent(newsViewIds[i], newsIntents[i]);
+                }
+            }
+        } else if (dbManager.selectDataAtWidgetState((appWidgetId)) == 4) {
+            if (newsURLs.length > 0) {
+                for (int i = 0; i < newsURLs.length; i++) {
+                    //url 에 각 textView에 설정된 url 할당하기
+                    String tempUrl = newsURLs[i];
+                    Intent tempIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tempUrl));
+                    tempIntent.putExtra("WidgetID", appWidgetId);
+                    newsIntents[i] = PendingIntent.getActivity(context, appWidgetId, tempIntent, 0);
+                    remoteViews.setOnClickPendingIntent(utubeViewIds[i], newsIntents[i]);
+                }
             }
         }
 
 
-        remoteViews.setOnClickPendingIntent(R.id.news1, newsIntents[0]);
-        remoteViews.setOnClickPendingIntent(R.id.news2, newsIntents[1]);
-        remoteViews.setOnClickPendingIntent(R.id.news3, newsIntents[2]);
-        remoteViews.setOnClickPendingIntent(R.id.news4, newsIntents[3]);
-        remoteViews.setOnClickPendingIntent(R.id.news5, newsIntents[4]);
-/***********************************************************************/
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 

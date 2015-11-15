@@ -28,6 +28,10 @@ public class ItemList {
         return rssList.get(index).getItemURL();
     }
 
+    public int getNumberOfItem() {
+        return rssList.size();
+    }
+
     public String getThumnailURL(int index) {
         return rssList.get(index).getItemThumnailURL();
     }

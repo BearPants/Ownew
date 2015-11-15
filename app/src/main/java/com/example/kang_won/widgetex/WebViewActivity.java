@@ -94,7 +94,7 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
                 Log.d("!!!!!!!!!!insertSUCCESS", a);
             } else {
                 Log.d("!!!!!!!!!!update", curURL);
-                dbManager.updateData(widgetID, curURL);
+                dbManager.updateDataAtBookmark(widgetID, curURL);
                 Log.d("!!!!!!!!!!updateSUCCESS", "SUCCESS");
                 String a = dbManager.selectDataAtBookmark(widgetID);
                 Log.d("!!!!!!!!!!updateSUCCESS", a);
