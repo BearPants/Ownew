@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.AsyncTask;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -39,6 +40,7 @@ public class WidgetReceiver extends BroadcastReceiver {
     public final static String FEED_KEY = "FEED";
     public final static String RSS_URL = "";
     public final static String RSS_TYPE = "TYPE";
+    public final static String SYNCHRONIZATION_KEY = "SYNC";
 
     public final static int IMAGE_PATH = 1000;
     public final static int COLOR = 1001;
@@ -46,6 +48,7 @@ public class WidgetReceiver extends BroadcastReceiver {
     public final static int SCREENSHOT = 1003;
     public final static int FEED = 1004;
     public final static int RSSLIST = 1005;
+    public final static int SYNCHRONIZATION = 1006;
 
     public final static int YOUTUBE_RSS = 10;
     public final static int NEWS_RSS = 11;
@@ -86,21 +89,26 @@ public class WidgetReceiver extends BroadcastReceiver {
             Bitmap bitmap = createBitmapImage(intent.getStringExtra(IMAGE_PATH_KEY));
             views.setImageViewBitmap(R.id.imageView, bitmap);
             changeViewVisibility(views, IMAGE_PATH);
+
             if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
                 dbManager.updateDataAtWidgetState(widgetID, 0);
             } else {
                 dbManager.insertDataAtWidgetState(widgetID, 0);
             }
 
+
         } else if (state == COLOR) {
             int colorCode = intent.getIntExtra(COLOR_KEY, -1);
             views.setInt(R.id.colorView, "setBackgroundColor", colorCode);
             changeViewVisibility(views, COLOR);
+
             if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
                 dbManager.updateDataAtWidgetState(widgetID, 1);
             } else {
                 dbManager.insertDataAtWidgetState(widgetID, 1);
             }
+
+
         } else if (state == SCREENSHOT) {
             Log.d("ScreenshotBroadCast", "GET BITMAP");
             String location = intent.getStringExtra(SCREENSHOT_KEY);
@@ -109,20 +117,69 @@ public class WidgetReceiver extends BroadcastReceiver {
             changeViewVisibility(views, IMAGE_PATH);
             File temp = new File(location);
             temp.delete();
+
             if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
                 dbManager.updateDataAtWidgetState(widgetID, 2);
             } else {
                 dbManager.insertDataAtWidgetState(widgetID, 2);
             }
+
+
         } else if (state == FEED) {
+
             type = intent.getIntExtra(RSS_TYPE, 0);
             myRSSHandler = new RSSHandler();
             myRSSHandler.setItemType(type);
             String feedUrl = intent.getStringExtra(FEED_KEY);
+            if (dbManager.getRecordCountAtRSS(widgetID) == 0) {
+                dbManager.insertDataAtRSS(widgetID, feedUrl);
+            } else {
+                dbManager.updateDataAtRSS(widgetID, feedUrl);
+            }
             ProcessXmlTask xmlTask = new ProcessXmlTask();
             xmlTask.execute(feedUrl);
             appWidgetManager.updateAppWidget(widgetID, views);
 
+        } else if (state == SYNCHRONIZATION) {
+            int widgetIds[] = dbManager.selectAllWidgetIdAtWidgetState();
+            for (int i = 0; i < widgetIds.length; i++) {
+                if (dbManager.getRecordCountAtWidgetState(widgetIds[i]) == 0) {
+                    continue;
+                }
+                int currentState = dbManager.selectDataAtWidgetState(widgetIds[i]);
+                if (currentState == 2) {
+                    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                    if (pm.isScreenOn()) {
+                        Intent tempIntent = new Intent(context, TakeScreenShotActivity.class);
+                        tempIntent.putExtra("URL", dbManager.selectDataAtBookmark(widgetIds[i]));
+                        tempIntent.putExtra("WidgetID", widgetIds[i]);
+                        tempIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(tempIntent);
+                    }
+
+                }
+                if (currentState == 3) {
+
+                    myRSSHandler = new RSSHandler();
+                    myRSSHandler.setItemType(11);
+                    String feedUrl = dbManager.selectDataAtRSS(widgetIds[i]);
+                    Log.d("RSSFEEDURL", feedUrl);
+                    ProcessXmlTask xmlTask = new ProcessXmlTask();
+                    xmlTask.execute(feedUrl);
+                    appWidgetManager.updateAppWidget(widgetIds[i], views);
+                }
+                if (currentState == 4) {
+                    Log.d("YOUTUBE", "들어와");
+
+                    myRSSHandler = new RSSHandler();
+                    myRSSHandler.setItemType(10);
+                    String feedUrl = dbManager.selectDataAtRSS(widgetIds[i]);
+                    ProcessXmlTask xmlTask = new ProcessXmlTask();
+                    xmlTask.execute(feedUrl);
+                    appWidgetManager.updateAppWidget(widgetIds[i], views);
+                }
+
+            }
         }
 
         appWidgetManager.updateAppWidget(widgetID, views);
@@ -229,6 +286,8 @@ public class WidgetReceiver extends BroadcastReceiver {
                     } else {
                         dbManager.insertDataAtWidgetState(widgetID, 4);
                     }
+
+
                     bitmaps = new ArrayList<Bitmap>();
                     ivList = new ArrayList<Integer>();
                     tvList = new ArrayList<Integer>();
@@ -259,11 +318,14 @@ public class WidgetReceiver extends BroadcastReceiver {
 
                     break;
                 case NEWS_RSS:
+
                     if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
                         dbManager.updateDataAtWidgetState(widgetID, 3);
                     } else {
                         dbManager.insertDataAtWidgetState(widgetID, 3);
                     }
+
+
                     RemoteViews views = new RemoteViews(rssContext.getPackageName(), R.layout.widget_layout);
                     int count3 = 5;
                     int lastItemCount2 = dbManager.getRecordCountAtRSSItem(widgetID);

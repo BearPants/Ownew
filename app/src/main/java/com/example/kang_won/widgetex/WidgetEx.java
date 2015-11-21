@@ -84,6 +84,7 @@ public class WidgetEx extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.settingButton, pendingIntent);
 
+
         /**********새로 추가 각 textview에 설정**********/
         String[] newsURLs = dbManager.selectDataByWidgetIdAtRSSItem(appWidgetId, "itemURL");
         if (dbManager.selectDataAtWidgetState(appWidgetId) == 3) {
