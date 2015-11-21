@@ -1,11 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1"
+    android:background="#FFFFFF"
+    android:id="@+id/mainLayout"
     tools:context="com.example.kang_won.widgetex.WebViewActivity">
 
     <LinearLayout
@@ -13,38 +12,87 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:layout_weight="0.25"
+        android:id="@+id/inputBarLayout">
 
         <EditText
-            android:layout_width="250dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/urlText"
-            android:text="http://www.naver.com"/>
+            android:text="http://www.naver.com"
+            android:hint="앞에 http://를 입력해주세요!!!"
+            android:layout_weight="1"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:singleLine="true"
+            android:selectAllOnFocus="true"
+            android:imeOptions="actionDone"/>
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/goBtn"
             android:text="이동"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/refreshBtn"
+            android:text="REFRESH"/>
+
     </LinearLayout>
 
-    <WebView
-        android:id="@+id/webView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.95"/>
+        android:layout_height="match_parent"
+        android:layout_weight="9.5"
+        android:id="@+id/webViewLayout">
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </WebView>
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.025">
+        android:layout_weight="0.25"
+        android:paddingTop="5dp"
+        android:id="@+id/buttonBarLayout">
+
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="뒤로"/>
+
+        <Button
+            android:id="@+id/forwardBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="앞으로"/>
+
+        <Button
+            android:id="@+id/tempBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:background="#FFFFFF"
+            android:layout_weight="5"
+            android:text=""/>
 
         <Button
             android:id="@+id/setBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="설정"/>
 
     </LinearLayout>

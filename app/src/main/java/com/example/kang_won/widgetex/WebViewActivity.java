@@ -6,20 +6,28 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * Created by 서강원 on 2015-09-24.
  */
 
-public class WebViewActivity extends Activity implements View.OnClickListener {
+public class WebViewActivity extends Activity implements View.OnClickListener, TextView.OnEditorActionListener {
 
+    private LinearLayout mainLayout;
     private WebView webView;
     private Button setBtn;
     private Button goBtn;
+    private Button refreshBtn;
+    private Button backBtn;
+    private Button forwardBtn;
     private EditText urlText;
     private String defaultURL = "http://www.naver.com";
     private String curURL = null;
@@ -32,9 +40,13 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
+        mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         webView = (WebView) findViewById(R.id.webView);
         setBtn = (Button) findViewById(R.id.setBtn);
         goBtn = (Button) findViewById(R.id.goBtn);
+        refreshBtn = (Button) findViewById(R.id.refreshBtn);
+        backBtn = (Button) findViewById(R.id.backBtn);
+        forwardBtn = (Button) findViewById(R.id.forwardBtn);
         urlText = (EditText) findViewById(R.id.urlText);
 
         Intent receivedIntent = getIntent();
@@ -48,38 +60,39 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
                 urlText.setText(url);
                 return super.shouldOverrideUrlLoading(view, url);
             }
-        });
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
-
-        webView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                WebView.HitTestResult hr = webView.getHitTestResult();
-
-                if(hr != null){
-                    Log.d("REREREERE", hr.getExtra() + "oioioioi" + hr.getType());
-                }
-                return false;
+            public void onPageFinished(WebView view, String url) {
+                urlText.setText(url);
+                checkStateGoAndForward();
             }
         });
 
+        webView.getSettings().setJavaScriptEnabled(true);   // javascript
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setSupportZoom(true);         // 확대
+        webView.getSettings().setPluginState(WebSettings.PluginState.ON_DEMAND); // 플러그인
+
+        checkStateGoAndForward();
         goURL(defaultURL);
 
         setBtn.setOnClickListener(this);
         goBtn.setOnClickListener(this);
+        refreshBtn.setOnClickListener(this);
+        backBtn.setOnClickListener(this);
+        forwardBtn.setOnClickListener(this);
+        urlText.setOnEditorActionListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
+
         if (v == setBtn) {
 
             curURL = getCurrentURL();
 
             //   Toast.makeText(getApplicationContext(), curURL, Toast.LENGTH_LONG).show();
-
 
             dbManager = new DBManager(getApplicationContext());
 
@@ -109,7 +122,52 @@ public class WebViewActivity extends Activity implements View.OnClickListener {
 
             //getApplicationContext().sendBroadcast(intent);
         } else if (v == goBtn) {
-            goURL(urlText.getText().toString());
+
+            String inputURL = urlText.getText().toString();
+
+            goURL(inputURL);
+        } else if(v == refreshBtn){
+            webView.reload();
+
+        } else if(v == backBtn && webView.canGoBack()){
+            webView.goBack();
+
+        } else if(v == forwardBtn && webView.canGoForward()){
+            webView.goForward();
+
+        }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+        if(v.getId() == R.id.urlText && actionId == EditorInfo.IME_ACTION_DONE){
+
+            String inputURL = urlText.getText().toString();
+
+            goURL(inputURL);
+        }
+
+        return false;
+    }
+
+    public void checkStateGoAndForward(){
+
+        if(webView.canGoBack() && webView.canGoForward()){
+            backBtn.setEnabled(true);
+            forwardBtn.setEnabled(true);
+
+        } else if(webView.canGoBack() && !webView.canGoForward()){
+            backBtn.setEnabled(true);
+            forwardBtn.setEnabled(false);
+
+        } else if(!webView.canGoBack() && webView.canGoForward()) {
+            backBtn.setEnabled(false);
+            forwardBtn.setEnabled(true);
+
+        } else {
+            backBtn.setEnabled(false);
+            forwardBtn.setEnabled(false);
         }
     }
 

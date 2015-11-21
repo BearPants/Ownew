@@ -49,7 +49,8 @@
             android:label="@string/title_activity_color_picker_view" />
         <activity
             android:name=".WebViewActivity"
-            android:label="@string/title_activity_web_view" />
+            android:label="@string/title_activity_web_view"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".TakeScreenShotActivity"
             android:label="@string/title_activity_take_screen_shot"
