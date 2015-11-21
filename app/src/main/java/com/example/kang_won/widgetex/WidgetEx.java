@@ -37,12 +37,13 @@ public class WidgetEx extends AppWidgetProvider {
 
             dbManager = new DBManager(context);
 
-            int recordCount = dbManager.getRecordCountAtBookmark(appWidgetId);
-
-            if (recordCount != 0) {
-                Log.d("!!!!!!!!!!!DELETE", "" + recordCount);
                 dbManager.deleteDataAtAllTable(appWidgetId);
-            }
+
+
+            Intent alarmIntent = new Intent();
+            alarmIntent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+
+            context.sendBroadcast(alarmIntent);
         }
 
     }

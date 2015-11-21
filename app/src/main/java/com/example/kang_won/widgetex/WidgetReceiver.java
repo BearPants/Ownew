@@ -40,6 +40,7 @@ public class WidgetReceiver extends BroadcastReceiver {
     public final static String FEED_KEY = "FEED";
     public final static String RSS_URL = "";
     public final static String RSS_TYPE = "TYPE";
+    public final static String FEED_NAME = "FEEDNAME";
     public final static String SYNCHRONIZATION_KEY = "SYNC";
 
     public final static int IMAGE_PATH = 1000;
@@ -78,7 +79,6 @@ public class WidgetReceiver extends BroadcastReceiver {
         int state = intent.getIntExtra(STATE, -1);
         widgetID = intent.getIntExtra("WidgetID", 0);
         Log.d("WidgetID-Receiver", widgetID + "");
-        //views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
 
         dbManager = new DBManager(context);
 
@@ -124,17 +124,17 @@ public class WidgetReceiver extends BroadcastReceiver {
                 dbManager.insertDataAtWidgetState(widgetID, 2);
             }
 
-
         } else if (state == FEED) {
-
             type = intent.getIntExtra(RSS_TYPE, 0);
             myRSSHandler = new RSSHandler();
             myRSSHandler.setItemType(type);
             String feedUrl = intent.getStringExtra(FEED_KEY);
+            String feedName = intent.getStringExtra(FEED_NAME);
+            Log.d("FEEDNAME",feedName);
             if (dbManager.getRecordCountAtRSS(widgetID) == 0) {
-                dbManager.insertDataAtRSS(widgetID, feedUrl);
+                dbManager.insertDataAtRSS(widgetID, feedUrl,feedName);
             } else {
-                dbManager.updateDataAtRSS(widgetID, feedUrl);
+                dbManager.updateDataAtRSS(widgetID, feedUrl,feedName);
             }
             ProcessXmlTask xmlTask = new ProcessXmlTask();
             xmlTask.execute(feedUrl);
@@ -162,7 +162,7 @@ public class WidgetReceiver extends BroadcastReceiver {
 
                     myRSSHandler = new RSSHandler();
                     myRSSHandler.setItemType(11);
-                    String feedUrl = dbManager.selectDataAtRSS(widgetIds[i]);
+                    String feedUrl = dbManager.selectDataAtRSS(widgetIds[i], "RSS");
                     Log.d("RSSFEEDURL", feedUrl);
                     ProcessXmlTask xmlTask = new ProcessXmlTask();
                     xmlTask.execute(feedUrl);
@@ -173,7 +173,7 @@ public class WidgetReceiver extends BroadcastReceiver {
 
                     myRSSHandler = new RSSHandler();
                     myRSSHandler.setItemType(10);
-                    String feedUrl = dbManager.selectDataAtRSS(widgetIds[i]);
+                    String feedUrl = dbManager.selectDataAtRSS(widgetIds[i], "RSS");
                     ProcessXmlTask xmlTask = new ProcessXmlTask();
                     xmlTask.execute(feedUrl);
                     appWidgetManager.updateAppWidget(widgetIds[i], views);

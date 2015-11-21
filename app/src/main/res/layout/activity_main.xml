@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,11 +15,21 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/stateText"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_weight="1"
+            android:fontFamily="arial"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
         <ListView
             android:id="@+id/totalWidgetlistView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="9" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,36 +37,18 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
+            <me.xiaopan.switchbutton.SwitchButton
+                android:id="@+id/switch_main_1"
+                style="@style/item"
+                android:background="@drawable/selector_preference_single"
+                android:checked="true"
+                android:text="동기화"
 
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical" />
-
-            <android.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.2" />
-
-            <EditText
-                android:id="@+id/intervalEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:gravity="center_vertical"
-                android:text="Medium Text"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <Button
-                android:id="@+id/setAlarmButton"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="설정" />
+                app:frameDrawable="@drawable/switch_frame"
+                app:sliderDrawable="@drawable/selector_switch_slider"
+                app:stateDrawable="@drawable/selector_switch_state"
+                app:stateMaskDrawable="@drawable/switch_state_mask"
+                app:withTextInterval="16dp" />
         </LinearLayout>
 
     </LinearLayout>

@@ -179,11 +179,13 @@ public class SelectRSSFeedActivity extends Activity {
                         Intent intent = new Intent(SelectRSSFeedActivity.this, WidgetReceiver.class);
                         intent.putExtra(WidgetReceiver.STATE, WidgetReceiver.FEED);
                         intent.putExtra("WidgetID", widgetID);
+                        intent.putExtra(WidgetReceiver.FEED_NAME,tempName);
                         intent.putExtra(WidgetReceiver.FEED_KEY, tempUrl);
                         intent.putExtra(WidgetReceiver.RSS_TYPE, itemType);
                         mContext.sendBroadcast(intent);
                         finish();
                          /*tempUrl넘기기*/
+                        tempName=null;
                         tempUrl = null;
                         itemType = UNKNOWN;
                     }
