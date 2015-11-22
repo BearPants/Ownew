@@ -10,8 +10,8 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,11 +23,10 @@ public class WebViewActivity extends Activity implements View.OnClickListener, T
 
     private LinearLayout mainLayout;
     private WebView webView;
-    private Button setBtn;
-    private Button goBtn;
-    private Button refreshBtn;
-    private Button backBtn;
-    private Button forwardBtn;
+    private ImageButton setBtn;
+    private ImageButton refreshBtn;
+    private ImageButton backBtn;
+    private ImageButton forwardBtn;
     private EditText urlText;
     private String defaultURL = "http://www.naver.com";
     private String curURL = null;
@@ -42,11 +41,10 @@ public class WebViewActivity extends Activity implements View.OnClickListener, T
 
         mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
         webView = (WebView) findViewById(R.id.webView);
-        setBtn = (Button) findViewById(R.id.setBtn);
-        goBtn = (Button) findViewById(R.id.goBtn);
-        refreshBtn = (Button) findViewById(R.id.refreshBtn);
-        backBtn = (Button) findViewById(R.id.backBtn);
-        forwardBtn = (Button) findViewById(R.id.forwardBtn);
+        setBtn = (ImageButton) findViewById(R.id.setBtn);
+        refreshBtn = (ImageButton) findViewById(R.id.refreshBtn);
+        backBtn = (ImageButton) findViewById(R.id.backBtn);
+        forwardBtn = (ImageButton) findViewById(R.id.forwardBtn);
         urlText = (EditText) findViewById(R.id.urlText);
 
         Intent receivedIntent = getIntent();
@@ -78,7 +76,6 @@ public class WebViewActivity extends Activity implements View.OnClickListener, T
         goURL(defaultURL);
 
         setBtn.setOnClickListener(this);
-        goBtn.setOnClickListener(this);
         refreshBtn.setOnClickListener(this);
         backBtn.setOnClickListener(this);
         forwardBtn.setOnClickListener(this);
@@ -121,12 +118,7 @@ public class WebViewActivity extends Activity implements View.OnClickListener, T
             finish();
 
             //getApplicationContext().sendBroadcast(intent);
-        } else if (v == goBtn) {
-
-            String inputURL = urlText.getText().toString();
-
-            goURL(inputURL);
-        } else if(v == refreshBtn){
+        }  else if(v == refreshBtn){
             webView.reload();
 
         } else if(v == backBtn && webView.canGoBack()){
@@ -145,7 +137,20 @@ public class WebViewActivity extends Activity implements View.OnClickListener, T
 
             String inputURL = urlText.getText().toString();
 
+            if(!checkHTTPorHTTPS(inputURL)) {
+                inputURL = "http://" + inputURL;
+            }
+
             goURL(inputURL);
+        }
+
+        return false;
+    }
+
+    public boolean checkHTTPorHTTPS(String inputURL){
+
+        if(inputURL.startsWith("http://") || inputURL.startsWith("https://")){
+            return true;
         }
 
         return false;

@@ -7,14 +7,15 @@
     android:id="@+id/mainLayout"
     tools:context="com.example.kang_won.widgetex.WebViewActivity">
 
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         android:layout_weight="0.25"
-        android:id="@+id/inputBarLayout">
+        android:id="@+id/inputBarLayout"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <EditText
             android:layout_width="wrap_content"
@@ -28,17 +29,13 @@
             android:selectAllOnFocus="true"
             android:imeOptions="actionDone"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/goBtn"
-            android:text="이동"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/refreshBtn"
-            android:text="REFRESH"/>
+            android:background="@mipmap/webview_refresh"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
 
     </LinearLayout>
 
@@ -52,7 +49,6 @@
             android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
         </WebView>
 
     </LinearLayout>
@@ -62,22 +58,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.25"
-        android:paddingTop="5dp"
         android:id="@+id/buttonBarLayout">
 
-        <Button
+        <ImageButton
             android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="뒤로"/>
+            android:background="@drawable/imagebutton_back_selector"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY" />
 
-        <Button
+        <ImageButton
             android:id="@+id/forwardBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="앞으로"/>
+            android:background="@drawable/imagebutton_forward_selector"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
 
         <Button
             android:id="@+id/tempBtn"
@@ -88,12 +87,14 @@
             android:layout_weight="5"
             android:text=""/>
 
-        <Button
+        <ImageButton
             android:id="@+id/setBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="설정"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@mipmap/webview_setting"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:layout_marginRight="10dp"/>
 
     </LinearLayout>
 
