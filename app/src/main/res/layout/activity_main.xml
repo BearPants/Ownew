@@ -3,53 +3,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
+
     tools:context=".MainActivity">
 
-
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/tempView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="#FFFFFF">
 
-        <TextView
-            android:id="@+id/stateText"
+        <ImageView
+            android:id="@+id/bgImage"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_weight="1"
-            android:fontFamily="arial"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            />
+    </FrameLayout>
 
-        <ListView
-            android:id="@+id/totalWidgetlistView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="9" />
-
+    <FrameLayout
+        android:id="@+id/mainView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <me.xiaopan.switchbutton.SwitchButton
-                android:id="@+id/switch_main_1"
-                style="@style/item"
-                android:background="@drawable/selector_preference_single"
-                android:checked="true"
-                android:text="동기화"
+            <TextView
+                android:id="@+id/stateText"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_weight="1"
+                android:fontFamily="arial"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                app:frameDrawable="@drawable/switch_frame"
-                app:sliderDrawable="@drawable/selector_switch_slider"
-                app:stateDrawable="@drawable/selector_switch_state"
-                app:stateMaskDrawable="@drawable/switch_state_mask"
-                app:withTextInterval="16dp" />
+            <ListView
+                android:id="@+id/totalWidgetlistView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="9" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <me.xiaopan.switchbutton.SwitchButton
+                    android:id="@+id/switch_main_1"
+                    style="@style/item"
+                    android:background="@drawable/selector_preference_single"
+                    android:checked="true"
+                    android:text="동기화 사용"
+
+                    app:frameDrawable="@drawable/switch_frame"
+                    app:sliderDrawable="@drawable/selector_switch_slider"
+                    app:stateDrawable="@drawable/selector_switch_state"
+                    app:stateMaskDrawable="@drawable/switch_state_mask"
+                    app:withTextInterval="16dp" />
+            </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 </RelativeLayout>

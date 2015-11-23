@@ -10,9 +10,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.view.Window;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,12 +30,14 @@ public class MainActivity extends Activity {
     private TextView stateText;
     private AlarmManager am;
     private PendingIntent sender;
+    private ImageView bgImage;
+    private FrameLayout tempView;
+    private FrameLayout mainView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         dbManager = new DBManager(this);
         am = (AlarmManager) getSystemService(ALARM_SERVICE);
         setViews();
@@ -41,8 +45,6 @@ public class MainActivity extends Activity {
         getWidgetContents();
         setListView();
         setSwitch();
-
-        dbManager.selectDataAtMainConfig("timeout");
 
 
     }
@@ -59,6 +61,19 @@ public class MainActivity extends Activity {
         stateText = (TextView) findViewById(R.id.stateText);
         widgetList = (ListView) findViewById(R.id.totalWidgetlistView);
         syncSwitch = (CompoundButton) findViewById(R.id.switch_main_1);
+        tempView = (FrameLayout) findViewById(R.id.tempView);
+        mainView = (FrameLayout) findViewById(R.id.mainView);
+        bgImage = (ImageView) findViewById(R.id.bgImage);
+
+        mainView.setVisibility(View.INVISIBLE);
+        tempView.setVisibility(View.VISIBLE);
+        bgImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tempView.setVisibility(View.GONE);
+                mainView.setVisibility(View.VISIBLE);
+            }
+        });
 
     }
 
@@ -72,27 +87,48 @@ public class MainActivity extends Activity {
             } else {
                 int tempState = dbManager.selectDataAtWidgetState(widgetIds[i]);
                 if (tempState == 1) {
-                    widgetContents.add("배경화면으로 색상이 설정되어 있습니다");
+                    widgetContents.add("위젯 상태 - 색상");
                 }
 
                 if (tempState == 0) {
-                    widgetContents.add("배경화면으로 이미지가 설정되어 있습니다");
+                    widgetContents.add("위젯 상태 - 이미지");
                 }
 
                 if (tempState == 2) {
                     String url = dbManager.selectDataAtBookmark(widgetIds[i]);
-                    widgetContents.add(url + "이 설정되어있습니다");
+                    int from = 0, to = 0;
+                    boolean isFirst = true, isSecond = true;
+
+                    for (int k = 0; k < url.length(); k++) {
+                        if (url.charAt(k) == '/') {
+                            if (isFirst) {
+                                isFirst = false;
+                                continue;
+
+                            } else if (isSecond) {
+                                isSecond = false;
+                                from = k + 1;
+                                continue;
+                            } else {
+                                to = k;
+                                break;
+                            }
+                        }
+
+                    }
+                    url = url.substring(from, to);
+                    widgetContents.add("위젯 상태 - " + url);
                 }
                 if (tempState == 3) {
                     String temp = dbManager.selectDataAtRSS(widgetIds[i], "RSS_name");
 
-                    widgetContents.add(temp + "가 설정되어있습니다");
+                    widgetContents.add("위젯 상태 - " + temp);
 
                 }
                 if (tempState == 4) {
                     String temp = dbManager.selectDataAtRSS(widgetIds[i], "RSS_name");
 
-                    widgetContents.add(temp+"가 설정되어있습니다");
+                    widgetContents.add("위젯 상태 - " + temp);
 
                 }
             }
@@ -112,7 +148,7 @@ public class MainActivity extends Activity {
         if (isSetted) {
             long interval = dbManager.selectDataAtMainConfig("timeout");
             interval = interval / 60000;
-            title = title + " - " + String.valueOf(interval) + "분 마다 동기화";
+            title = title + " - 동기화 (" + String.valueOf(interval) + "분)";
         }
         stateText.setText(title);
     }
@@ -154,7 +190,7 @@ public class MainActivity extends Activity {
     }
 
     public void chooseSetting() {
-        final CharSequence[] items = {"30분", "1시간", "1시간 30분", "2시간"};
+        final CharSequence[] items = {"30분", "1시간", "1시간 30분", "2시간", "테스트 - 1분"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("동기화 시간 설정");
@@ -182,6 +218,12 @@ public class MainActivity extends Activity {
                     setText();
                 } else if (items[item].equals("2시간")) {
                     long interval = 7200000;
+                    setSynchronize(interval);
+                    dbManager.updateSyncAtMainConfig(1);
+                    dbManager.updateTimeoutAtMainConfig((int) interval);
+                    setText();
+                } else if (items[item].equals("테스트 - 1분")) {
+                    long interval = 60000;
                     setSynchronize(interval);
                     dbManager.updateSyncAtMainConfig(1);
                     dbManager.updateTimeoutAtMainConfig((int) interval);

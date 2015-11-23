@@ -36,8 +36,7 @@ public class WidgetEx extends AppWidgetProvider {
             Log.d("WIDGET _DELETE!!!", appWidgetId + "");
 
             dbManager = new DBManager(context);
-
-                dbManager.deleteDataAtAllTable(appWidgetId);
+            dbManager.deleteDataAtAllTable(appWidgetId);
 
 
             Intent alarmIntent = new Intent();

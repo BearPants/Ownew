@@ -9,15 +9,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar">
         <activity
-
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="com.example.kang_wond.widgetex.IMAGE" />
@@ -50,20 +48,15 @@
         <activity
             android:name=".WebViewActivity"
             android:label="@string/title_activity_web_view"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".TakeScreenShotActivity"
             android:label="@string/title_activity_take_screen_shot"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".SelectRSSFeedActivity"
-            android:label="@string/title_activity_select_rssfeed"></activity>
-        <activity
-            android:name=".IndexAdapter"
-            android:label="@string/title_activity_index_adapter"></activity>
-        <activity
-            android:name=".ContentAdapter"
-            android:label="@string/title_activity_content_adapter"></activity>
+            android:label="@string/title_activity_select_rssfeed" />
+
     </application>
 
 </manifest>

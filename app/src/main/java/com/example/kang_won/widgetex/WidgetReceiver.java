@@ -69,6 +69,7 @@ public class WidgetReceiver extends BroadcastReceiver {
     private int count;
     private ArrayList<Integer> ivList;
     private ArrayList<Integer> tvList;
+    private int widgetIds[];
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -87,8 +88,8 @@ public class WidgetReceiver extends BroadcastReceiver {
 
         } else if (state == IMAGE_PATH) {
             Bitmap bitmap = createBitmapImage(intent.getStringExtra(IMAGE_PATH_KEY));
-            views.setImageViewBitmap(R.id.imageView, bitmap);
-            changeViewVisibility(views, IMAGE_PATH);
+            views.setImageViewBitmap(R.id.colorView, bitmap);
+            changeViewVisibility(views, COLOR);
 
             if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
                 dbManager.updateDataAtWidgetState(widgetID, 0);
@@ -130,18 +131,24 @@ public class WidgetReceiver extends BroadcastReceiver {
             myRSSHandler.setItemType(type);
             String feedUrl = intent.getStringExtra(FEED_KEY);
             String feedName = intent.getStringExtra(FEED_NAME);
-            Log.d("FEEDNAME",feedName);
+            Log.d("FEEDNAME", feedName);
             if (dbManager.getRecordCountAtRSS(widgetID) == 0) {
-                dbManager.insertDataAtRSS(widgetID, feedUrl,feedName);
+                dbManager.insertDataAtRSS(widgetID, feedUrl, feedName);
             } else {
-                dbManager.updateDataAtRSS(widgetID, feedUrl,feedName);
+                dbManager.updateDataAtRSS(widgetID, feedUrl, feedName);
             }
             ProcessXmlTask xmlTask = new ProcessXmlTask();
             xmlTask.execute(feedUrl);
             appWidgetManager.updateAppWidget(widgetID, views);
 
         } else if (state == SYNCHRONIZATION) {
-            int widgetIds[] = dbManager.selectAllWidgetIdAtWidgetState();
+
+            if (widgetID == 0) {
+                widgetIds = dbManager.selectAllWidgetIdAtWidgetState();
+            } else {
+                int tempWidgetIds[] = {widgetID};
+                widgetIds = tempWidgetIds;
+            }
             for (int i = 0; i < widgetIds.length; i++) {
                 if (dbManager.getRecordCountAtWidgetState(widgetIds[i]) == 0) {
                     continue;
@@ -188,36 +195,46 @@ public class WidgetReceiver extends BroadcastReceiver {
 
     void changeViewVisibility(RemoteViews views, int state) {
         switch (state) {
+
             case IMAGE_PATH:
-                views.setInt(R.id.imageView, "setVisibility", View.VISIBLE);
+                views.setInt(R.id.imageLayout, "setVisibility", View.VISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
 
                 break;
             case COLOR:
-                views.setInt(R.id.imageView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+
+                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.VISIBLE);
                 views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
 
                 break;
             case GET_WEBVIEW_URL:
+                views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+
                 views.setInt(R.id.newsView, "setVisibility", View.VISIBLE);
-                views.setInt(R.id.imageView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
 
                 break;
             case FEED:
+                views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+
                 views.setInt(R.id.newsView, "setVisibility", View.VISIBLE);
-                views.setInt(R.id.imageView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
                 break;
             case RSSLIST:
+                views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+
                 views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
-                views.setInt(R.id.imageView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.VISIBLE);
                 break;
@@ -384,6 +401,7 @@ public class WidgetReceiver extends BroadcastReceiver {
             youtube_appWidgetManager.updateAppWidget(widgetID, youtube_views);
             count++;
         }
+
     }
 
     public void sendBroadCastForOnUpdate() {
