@@ -65,6 +65,8 @@ public class WidgetEx extends AppWidgetProvider {
         Intent intent = new Intent(context, SetActivity.class);
         intent.putExtra("WidgetID", appWidgetId);
         Intent webViewIntent;
+        Intent syncIntent = new Intent(context, tempActivity.class);
+        syncIntent.putExtra("WidgetID", appWidgetId);
         PendingIntent[] newsIntents = new PendingIntent[5];
 
         dbManager = new DBManager(context);
@@ -81,9 +83,10 @@ public class WidgetEx extends AppWidgetProvider {
             PendingIntent webViewPendingIntent = PendingIntent.getActivity(context, appWidgetId, webViewIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.imageView, webViewPendingIntent);
         }
+        PendingIntent syncPendingIntent = PendingIntent.getActivity(context, appWidgetId, syncIntent, 0);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
         remoteViews.setOnClickPendingIntent(R.id.settingButton, pendingIntent);
-
+        remoteViews.setOnClickPendingIntent(R.id.syncButton, syncPendingIntent);
 
         /**********새로 추가 각 textview에 설정**********/
         String[] newsURLs = dbManager.selectDataByWidgetIdAtRSSItem(appWidgetId, "itemURL");

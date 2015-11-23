@@ -88,8 +88,8 @@ public class WidgetReceiver extends BroadcastReceiver {
 
         } else if (state == IMAGE_PATH) {
             Bitmap bitmap = createBitmapImage(intent.getStringExtra(IMAGE_PATH_KEY));
-            views.setImageViewBitmap(R.id.colorView, bitmap);
-            changeViewVisibility(views, COLOR);
+            views.setImageViewBitmap(R.id.userImageView, bitmap);
+            changeViewVisibility(views, IMAGE_PATH);
 
             if (dbManager.getRecordCountAtWidgetState(widgetID) != 0) {
                 dbManager.updateDataAtWidgetState(widgetID, 0);
@@ -115,7 +115,7 @@ public class WidgetReceiver extends BroadcastReceiver {
             String location = intent.getStringExtra(SCREENSHOT_KEY);
             Bitmap bitmap = BitmapFactory.decodeFile(location);
             views.setImageViewBitmap(R.id.imageView, bitmap);
-            changeViewVisibility(views, IMAGE_PATH);
+            changeViewVisibility(views, SCREENSHOT);
             File temp = new File(location);
             temp.delete();
 
@@ -197,44 +197,49 @@ public class WidgetReceiver extends BroadcastReceiver {
         switch (state) {
 
             case IMAGE_PATH:
-                views.setInt(R.id.imageLayout, "setVisibility", View.VISIBLE);
-                views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.image_Layout, "setVisibility", View.VISIBLE);
+                views.setInt(R.id.color_layout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.webLayout, "setVisibility", View.INVISIBLE);
 
                 break;
             case COLOR:
                 views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
-
-                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
-                views.setInt(R.id.colorView, "setVisibility", View.VISIBLE);
+                views.setInt(R.id.image_Layout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.color_layout, "setVisibility", View.VISIBLE);
                 views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.webLayout, "setVisibility", View.INVISIBLE);
+
 
                 break;
-            case GET_WEBVIEW_URL:
+            case SCREENSHOT:
                 views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.webLayout, "setVisibility", View.VISIBLE);
 
                 views.setInt(R.id.newsView, "setVisibility", View.VISIBLE);
-                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
-                views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.image_Layout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.color_layout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
 
                 break;
             case FEED:
                 views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.webLayout, "setVisibility", View.INVISIBLE);
 
                 views.setInt(R.id.newsView, "setVisibility", View.VISIBLE);
-                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
-                views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.image_Layout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.color_layout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.INVISIBLE);
                 break;
             case RSSLIST:
                 views.setInt(R.id.firstLayout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.webLayout, "setVisibility", View.INVISIBLE);
 
                 views.setInt(R.id.newsView, "setVisibility", View.INVISIBLE);
-                views.setInt(R.id.imageLayout, "setVisibility", View.INVISIBLE);
+                views.setInt(R.id.image_Layout, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.colorView, "setVisibility", View.INVISIBLE);
                 views.setInt(R.id.rss_list, "setVisibility", View.VISIBLE);
                 break;

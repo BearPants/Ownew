@@ -103,7 +103,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/imageLayout"
+        android:id="@+id/webLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -115,11 +115,11 @@
                 android:id="@+id/image_title"
                 android:layout_width="match_parent"
                 android:layout_height="29dp"
+                android:background="#cccccc"
                 android:paddingBottom="5dp"
-
                 android:paddingLeft="5dp"
                 android:singleLine="true"
-                android:text="WEBVIEW"
+                android:text="WEB"
                 android:textColor="#FFFFFF"
                 android:textSize="20dp" />
 
@@ -135,15 +135,45 @@
     </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/color_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/colorView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+            android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/colorView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="false"
+                android:background="#00000000"
+                android:scaleType="fitXY" />
+        </RelativeLayout>
+
+
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/image_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/userImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="false"
+                android:background="#00000000"
+                android:scaleType="fitXY" />
+        </RelativeLayout>
+
+
+    </FrameLayout>
     <FrameLayout
         android:id="@+id/rss_list"
         android:layout_width="match_parent"
@@ -311,13 +341,35 @@
     <FrameLayout
         android:id="@+id/firstLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
 
-        <ImageView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@mipmap/rainbow" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/first_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#000000"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:text="OWNEW"
+                android:textColor="#FFFFFF"
+                android:textSize="20dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingBottom="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="40dp"
+                android:src="@mipmap/finger" />
+        </RelativeLayout>
     </FrameLayout>
 
     <FrameLayout

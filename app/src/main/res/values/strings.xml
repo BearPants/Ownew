@@ -21,5 +21,6 @@
     <string name="title_activity_content_adapter">ContentAdapter</string>
     <string name="title_activity_start">StartActivity</string>
     <string name="title_activity_sync_setting">SyncSettingActivity</string>
+    <string name="title_activity_temp">tempActivity</string>
 
 </resources>
